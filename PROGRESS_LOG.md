@@ -152,16 +152,21 @@ class HGTConvWithAttn(HGTConv):
 
 ## All Phases Complete ✅
 
-| Phase | Description | Status |
-|---|---|---|
-| 1 | Planning & Design | ✅ COMPLETED |
-| 2 | Data Preprocessing | ✅ COMPLETED |
-| 3 | Embedding Generation | ✅ COMPLETED |
-| 4 | HGT Model & Training | ✅ COMPLETED |
-| 5 | API & Frontend | ✅ COMPLETED |
-| 6 | Explainable AI (XAI) | ✅ COMPLETED |
-| 7 | Polypharmacy Safety | ✅ COMPLETED |
-| 8 | Temporal ADR Prediction | ✅ COMPLETED |
+| Phase | Status | Details |
+| :--- | :--- | :--- |
+| Phase 1: Environment Setup | 🟢 Completed | PyTorch Geometric, ChemBERTa, FastAPI |
+| Phase 2: Data Curation | 🟢 Completed | Processed SIDER, DrugBank, Biomarkers |
+| Phase 3: Graph Construction | 🟢 Completed | Built PyG `HeteroData` structure |
+| Phase 4: HGT Model | 🟢 Completed | Designed, trained, and extracted best checkpoint |
+| Phase 5: Fast Inference | 🟢 Completed | Extracted drug embeddings, implemented SMILES pipeline |
+| Phase 6: Web Dashboard | 🟢 Completed | Built HTML/CSS/JS frontend interface |
+| Phase 7: Explainable AI | 🟢 Completed | Explanations via edge attention extraction |
+| Phase 8: Polypharmacy & Synergy | 🟢 Completed | Evaluates interacting drugs & amplified side effects |
+| Phase 9: Temporal ADR Prediction | 🟢 Completed | Mapped FAERS dataset to onset categories and median days |
+| Phase 10: Counterfactual XAI | 🟢 Completed | Simulates drug-target edge removal to calculate causal impact |
+
+## Blockers / Considerations
+*   Waiting on FDA real-world data API integration for future validation. Currently using static dataset cuts limit the scope.
 
 ---
 

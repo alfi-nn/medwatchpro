@@ -5,13 +5,22 @@
 ---
 
 ## 1. Project Overview
-**MedWatchPro** is an end-to-end artificial intelligence pipeline designed to predict adverse drug reactions (ADRs) and classify drug-biomarker interactions. By leveraging state-of-the-art **Heterogeneous Graph Transformer (HGT)** architectures combined with advanced Deep Learning language models (ChemBERTa and ProtBERT), the system processes complex multi-relational graphs of drugs, proteins, and genetic variants to provide high-accuracy safety intelligence.
+**MedWatchPro** is an end-to-end artificial intelligence pipeline designed to predict adverse drug reactions (ADRs) and classify drug-biomarker interactions. By leveraging state-of-the-art **Heterogeneous Graph Transformer (HGT)** architectures combined with advanced Deep Learning language models (ChemBERta and ProtBERT), the system processes complex multi-relational graphs of drugs, proteins, and genetic variants to provide high-accuracy safety intelligence.
 
 ### 1.1 Core Objectives
 1. **Side-Effect Prediction**: Predict the probability of 100 high-impact adverse events for any given drug compound.
 2. **Biomarker Classification**: Determine whether a specific genetic variant (biomarker) leads to an *adverse* reaction or an *efficacy* response when exposed to a specific drug.
 3. **Novel Compound Analysis**: Enable real-time prediction for completely new, out-of-database molecules using only their SMILES strings.
 4. **Temporal Onset Prediction**: Predict *when* side effects are likely to occur (acute to chronic) using real-world FDA FAERS data integration.
+
+## 4. Key Features Implemented
+*   **Zero-Shot SMILES Prediction:** Uses `ChemBERTa-77M-MLM` to generate embeddings for unseen molecules, mapping them to the HGT latent space.
+*   **Explainable AI (XAI):**
+    *   **Attention Weights:** Extracts node-level attention to identify the proteins and existing drugs most responsible for a prediction.
+    *   **Counterfactual Simulation:** Dynamically masks specific drug-target edges in the graph during inference to calculate the causal impact on side-effect probabilities.
+*   **Polypharmacy Analysis:** Supports combinations of up to 3 drugs, evaluating their embeddings synergistically to detect amplified adverse reactions.
+*   **Biomarker Context:** Predicts if a patient's genetic variant (e.g., CYP2C9 *2/*3) will lead to an adverse event or efficacy.
+*   **Temporal ADR Prediction:** Augments safety data with median onset timeframes derived from FDA FAERS reports.
 
 ---
 
