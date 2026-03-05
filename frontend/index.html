@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedWatchPro - AI Drug Safety Analysis</title>
+    <meta name="description"
+        content="AI-powered adverse drug reaction and biomarker prediction using Heterogeneous Graph Transformers">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #111827;
+            --bg-card: #1a1f35;
+            --bg-card-hover: #222845;
+            --border: #2a3050;
+            --text-primary: #e8eaf0;
+            --text-secondary: #9ca3bc;
+            --text-muted: #6b7280;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-amber: #f59e0b;
+            --gradient-main: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            --gradient-card: linear-gradient(145deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.05));
+            --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ── Background Effects ─────────────────────── */
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+        }
+
+        .bg-grid::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* ── Header ─────────────────────────────────── */
+        header {
+            position: relative;
+            z-index: 10;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 14, 26, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-main);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .logo h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .model-badge {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-green);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        /* ── Main Content ───────────────────────────── */
+        main {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* ── Stats Bar ──────────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        .stat-value.blue {
+            color: var(--accent-blue);
+        }
+
+        .stat-value.purple {
+            color: var(--accent-purple);
+        }
+
+        .stat-value.cyan {
+            color: var(--accent-cyan);
+        }
+
+        .stat-value.green {
+            color: var(--accent-green);
+        }
+
+        /* ── Search Section ─────────────────────────── */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 700px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            padding-left: 3rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .search-results {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-result-item:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .result-id {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Analysis Panel ─────────────────────────── */
+        .analysis-panel {
+            display: none;
+        }
+
+        .analysis-panel.active {
+            display: block;
+        }
+
+        .drug-header {
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .drug-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .drug-id {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        .drug-smiles {
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            max-width: 400px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 0.4rem;
+        }
+
+        /* ── Sections ───────────────────────────────── */
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title .icon {
+            font-size: 1.3rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .results-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+        }
+
+        /* ── Side Effects ───────────────────────────── */
+        .se-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .se-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.7rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .se-item:hover {
+            border-color: var(--border);
+            background: var(--bg-card-hover);
+        }
+
+        .se-name {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .se-bar-container {
+            width: 120px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .se-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .se-bar.high {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        .se-bar.medium {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24);
+        }
+
+        .se-bar.low {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+        .se-prob {
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .se-prob.high {
+            color: var(--accent-red);
+        }
+
+        .se-prob.medium {
+            color: var(--accent-amber);
+        }
+
+        .se-prob.low {
+            color: var(--accent-green);
+        }
+
+        .risk-badge {
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .risk-badge.high {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .risk-badge.medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-amber);
+        }
+
+        .risk-badge.low {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        /* ── Biomarkers ─────────────────────────────── */
+        .bio-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .bio-item {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .bio-gene {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--accent-cyan);
+        }
+
+        .bio-change {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .bio-protein {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        .bio-prediction {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .bio-prediction.adverse {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+
+        .bio-prediction.efficacy {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .bio-prediction.other {
+            background: rgba(107, 114, 128, 0.15);
+            color: var(--text-muted);
+        }
+
+        .bio-conf {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Explanations (XAI) ────────────────── */
+        .explanation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .explanation-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.7rem 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .explanation-item:hover {
+            border-color: var(--border);
+            background: var(--bg-card-hover);
+        }
+
+        .exp-type-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .exp-type-badge.protein {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .exp-type-badge.drug {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .exp-type-badge.info {
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--accent-cyan);
+        }
+
+        .exp-name {
+            flex: 1;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .exp-bar-container {
+            width: 100px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        .exp-bar {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .exp-score {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            min-width: 40px;
+            text-align: right;
+        }
+
+        /* ── Loading ────────────────────────────────── */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ── Welcome ────────────────────────────────── */
+        .welcome {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .welcome h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-blue);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ── Responsive ─────────────────────────────── */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Combination Analysis ──────────────────── */
+        .combo-toggle {
+            display: inline-flex;
+            gap: 0;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .combo-toggle button {
+            padding: 0.6rem 1.2rem;
+            background: var(--bg-card);
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .combo-toggle button.active {
+            background: var(--gradient-main);
+            color: white;
+        }
+
+        .combo-inputs {
+            display: none;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+            max-width: 700px;
+        }
+
+        .combo-inputs.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .combo-drug-row {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .combo-drug-row input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .combo-drug-row input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .combo-drug-row label {
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            min-width: 55px;
+        }
+
+        .combo-analyze-btn {
+            padding: 0.8rem 2rem;
+            background: var(--gradient-main);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            align-self: flex-start;
+        }
+
+        .combo-analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .synergy-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 0.5rem;
+        }
+
+        .synergy-badge.amplified {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .ddi-warning {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .ddi-warning .icon {
+            font-size: 1.5rem;
+        }
+
+        .combo-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .combo-summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .combo-summary-card .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .combo-summary-card .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .individual-scores {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .individual-score-tag {
+            font-size: 0.7rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-grid"></div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">M</div>
+                <div>
+                    <h1>MedWatchPro</h1>
+                    <span>AI-Powered Drug Safety Analysis</span>
+                </div>
+            </div>
+            <div class="model-badge" id="modelBadge">HGT Model: Loading...</div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-label">Drugs Analyzed</div>
+                <div class="stat-value blue" id="statDrugs">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Protein Targets</div>
+                <div class="stat-value purple" id="statProteins">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Side Effects Tracked</div>
+                <div class="stat-value cyan" id="statSE">--</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Model AUC Score</div>
+                <div class="stat-value green" id="statAUC">--</div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-section">
+            <div class="search-wrapper">
+                <span class="search-icon">&#128269;</span>
+                <input type="text" class="search-input" id="searchInput"
+                    placeholder="Search for a drug (e.g., aspirin, metformin, ibuprofen...)">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+        </div>
+
+        <!-- Combination Analysis Section -->
+        <div class="search-section">
+            <div class="combo-toggle">
+                <button class="active" onclick="setMode('single')">Single Drug</button>
+                <button onclick="setMode('combo')">Drug Combination</button>
+            </div>
+
+            <div class="combo-inputs" id="comboInputs">
+                <div class="combo-drug-row">
+                    <label>Drug 1</label>
+                    <input type="text" id="comboDrug1" placeholder="e.g., Aspirin">
+                </div>
+                <div class="combo-drug-row">
+                    <label>Drug 2</label>
+                    <input type="text" id="comboDrug2" placeholder="e.g., Warfarin">
+                </div>
+                <div class="combo-drug-row">
+                    <label>Drug 3</label>
+                    <input type="text" id="comboDrug3" placeholder="(optional)">
+                </div>
+                <button class="combo-analyze-btn" onclick="analyzeCombination()">&#128300; Analyze Combination</button>
+            </div>
+        </div>
+
+        <!-- Combination Results -->
+        <div class="analysis-panel" id="comboPanel"></div>
+
+        <!-- Welcome -->
+        <div class="welcome" id="welcomePanel">
+            <h2>Drug Safety Intelligence</h2>
+            <p>Search for any drug to get AI-powered predictions for side effects and biomarker interactions using our
+                Heterogeneous Graph Transformer model.</p>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">&#9889;</div>
+                    <h3>Side-Effect Prediction</h3>
+                    <p>Multi-label prediction across 100 side effects with calibrated confidence scores</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#129516;</div>
+                    <h3>Biomarker Analysis</h3>
+                    <p>Predict whether genetic variants cause adverse or efficacy responses</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">&#128200;</div>
+                    <h3>Graph Intelligence</h3>
+                    <p>Powered by HGT with 2.4M drug interactions and 30K protein targets</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loadingPanel">
+            <div class="spinner"></div>
+            <p>Analyzing drug interactions...</p>
+        </div>
+
+        <!-- Analysis Results -->
+        <div class="analysis-panel" id="analysisPanel">
+            <div class="drug-header">
+                <div>
+                    <div class="drug-name" id="drugName"></div>
+                    <div class="drug-id" id="drugId"></div>
+                    <div class="drug-smiles" id="drugSmiles"></div>
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <div class="results-card">
+                    <div class="section-title">
+                        <span class="icon">&#9888;&#65039;</span> Predicted Side Effects
+                    </div>
+                    <div class="se-list" id="seList"></div>
+                </div>
+                <div class="results-card">
+                    <div class="section-title">
+                        <span class="icon">&#129516;</span> Biomarker Interactions
+                    </div>
+                    <div class="bio-list" id="bioList"></div>
+                </div>
+            </div>
+
+            <!-- XAI Explanation Card -->
+            <div class="results-card" style="margin-bottom: 2rem;">
+                <div class="section-title">
+                    <span class="icon">&#129504;</span> Model Explanation (XAI)
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Top graph neighbors that
+                    influenced this prediction, ranked by HGT attention weight.</p>
+                <div class="explanation-list" id="expList"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API = '';
+        let debounceTimer;
+
+        // ── Load Stats ──────────────────────────────
+        async function loadStats() {
+            try {
+                const res = await fetch(`${API}/api/stats`);
+                const data = await res.json();
+                document.getElementById('statDrugs').textContent = data.num_drugs.toLocaleString();
+                document.getElementById('statProteins').textContent = data.num_proteins.toLocaleString();
+                document.getElementById('statSE').textContent = data.num_side_effects;
+                document.getElementById('statAUC').textContent = data.model_auc.toFixed(3);
+                document.getElementById('modelBadge').textContent =
+                    `HGT Model: AUC ${data.model_auc.toFixed(3)} | Epoch ${data.best_epoch}`;
+            } catch (e) {
+                console.error('Stats error:', e);
+            }
+        }
+
+        // ── Search ──────────────────────────────────
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const q = searchInput.value.trim();
+            if (q.length < 2) { searchResults.classList.remove('active'); return; }
+            debounceTimer = setTimeout(() => searchDrugs(q), 200);
+        });
+
+        searchInput.addEventListener('blur', () => {
+            setTimeout(() => searchResults.classList.remove('active'), 200);
+        });
+
+        async function searchDrugs(query) {
+            try {
+                const res = await fetch(`${API}/api/search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, limit: 8 })
+                });
+                const data = await res.json();
+                if (data.results.length > 0) {
+                    searchResults.innerHTML = data.results.map(d => {
+                        // Escape quotes so they don't break the HTML string
+                        const escapedName = d.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                        return `
+                        <div class="search-result-item" onmousedown="analyzeDrug('${escapedName}')">
+                            <div class="result-name">${d.name}</div>
+                            <div class="result-id">${d.drug_id}</div>
+                        </div>
+                        `;
+                    }).join('');
+                    searchResults.classList.add('active');
+                } else {
+                    // Provide option to analyze as SMILES if it looks vaguely like one
+                    if (query.match(/[CNOcno\(\)\[\]\=\#]/) && query.length > 4) {
+                        searchResults.innerHTML = `
+                            <div class="search-result-item" onmousedown="analyzeDrug('${query.replace(/'/g, "\\'")}', true)">
+                                <div class="result-name">Analyze as novel SMILES string:</div>
+                                <div class="result-id" style="color: var(--accent-blue)">${query}</div>
+                            </div>
+                        `;
+                    } else {
+                        searchResults.innerHTML = '<div class="search-result-item"><div class="result-name" style="color:var(--text-muted)">No drugs found</div></div>';
+                    }
+                    searchResults.classList.add('active');
+                }
+            } catch (e) { console.error('Search error:', e); }
+        }
+
+        // ── Analyze Drug ────────────────────────────
+        async function analyzeDrug(name, isSmiles = false) {
+            searchResults.classList.remove('active');
+            searchInput.value = name;
+            document.getElementById('welcomePanel').style.display = 'none';
+            document.getElementById('analysisPanel').classList.remove('active');
+            document.getElementById('loadingPanel').classList.add('active');
+
+            try {
+                let res;
+                if (isSmiles) {
+                    res = await fetch(`${API}/api/predict_smiles`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ smiles: name, top_k: 25, threshold: 0.1 })
+                    });
+                } else {
+                    res = await fetch(`${API}/api/predict`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ drug_name: name, top_k: 25, threshold: 0.1 })
+                    });
+                }
+
+                if (!res.ok) {
+                    const errObj = await res.json();
+                    throw new Error(errObj.detail || 'Prediction failed');
+                }
+                const data = await res.json();
+                renderResults(data);
+            } catch (e) {
+                alert('Error: ' + e.message);
+                document.getElementById('loadingPanel').classList.remove('active');
+                document.getElementById('welcomePanel').style.display = 'block';
+            }
+        }
+
+        // ── Render Results ──────────────────────────
+        function renderResults(data) {
+            document.getElementById('loadingPanel').classList.remove('active');
+            document.getElementById('analysisPanel').classList.add('active');
+
+            document.getElementById('drugName').textContent = data.drug.name;
+            document.getElementById('drugId').textContent = data.drug.id;
+            document.getElementById('drugSmiles').textContent = `SMILES: ${data.drug.smiles}`;
+
+            // Side Effects
+            const seList = document.getElementById('seList');
+            if (data.side_effects.length === 0) {
+                seList.innerHTML = '<div class="empty-state">No significant side effects predicted above threshold</div>';
+            } else {
+                seList.innerHTML = data.side_effects.map(se => `
+                    <div class="se-item">
+                        <span class="se-name">${se.name}</span>
+                        <div class="se-bar-container">
+                            <div class="se-bar ${se.risk_level}" style="width:${se.probability * 100}%"></div>
+                        </div>
+                        <span class="se-prob ${se.risk_level}">${(se.probability * 100).toFixed(1)}%</span>
+                        <span class="risk-badge ${se.risk_level}">${se.risk_level}</span>
+                    </div>
+                `).join('');
+            }
+
+            // Biomarkers
+            const bioList = document.getElementById('bioList');
+            if (data.biomarkers.length === 0) {
+                bioList.innerHTML = '<div class="empty-state">No biomarker interactions found for this drug</div>';
+            } else {
+                bioList.innerHTML = data.biomarkers.map(b => `
+                    <div class="bio-item">
+                        <div class="bio-gene">${b.gene}</div>
+                        <div class="bio-change">Variant: ${b.change}</div>
+                        <div class="bio-protein">Protein: ${b.protein}</div>
+                        <div>
+                            <span class="bio-prediction ${b.prediction}">${b.prediction.toUpperCase()}</span>
+                            <span class="bio-conf">Confidence: ${(b.confidence * 100).toFixed(1)}%</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // XAI Explanations
+            const expList = document.getElementById('expList');
+            if (data.explanations && data.explanations.length > 0) {
+                expList.innerHTML = data.explanations.map(exp => `
+                    <div class="explanation-item">
+                        <span class="exp-type-badge ${exp.type}">${exp.type}</span>
+                        <span class="exp-name">${exp.name}${exp.id ? ` <span style="color:var(--text-muted);font-size:0.8rem">(${exp.id})</span>` : ''}</span>
+                        <div class="exp-bar-container">
+                            <div class="exp-bar" style="width:${Math.min(exp.attention * 100, 100)}%"></div>
+                        </div>
+                        <span class="exp-score">${(exp.attention * 100).toFixed(0)}%</span>
+                    </div>
+                `).join('');
+            } else {
+                expList.innerHTML = '<div class="empty-state">No attention explanations available</div>';
+            }
+        }
+
+        // ── Enter key ───────────────────────────────
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const q = searchInput.value.trim();
+                // If it looks like SMILES and wasn't found in normal search, process as SMILES
+                if (q && q.match(/[CNOcno\(\)\[\]\=\#]/) && q.length > 5 && !document.querySelector('.search-result-item .result-id') || document.querySelector('.search-result-item .result-id')?.textContent === q) {
+                    analyzeDrug(q, true);
+                } else if (q) {
+                    analyzeDrug(q);
+                }
+            }
+        });
+
+        // ── Mode Toggle ──────────────────────────────
+        function setMode(mode) {
+            const btns = document.querySelectorAll('.combo-toggle button');
+            btns.forEach(b => b.classList.remove('active'));
+            if (mode === 'combo') {
+                btns[1].classList.add('active');
+                document.getElementById('comboInputs').classList.add('active');
+                document.querySelector('.search-wrapper').style.display = 'none';
+            } else {
+                btns[0].classList.add('active');
+                document.getElementById('comboInputs').classList.remove('active');
+                document.querySelector('.search-wrapper').style.display = 'block';
+            }
+            // Hide results
+            document.getElementById('analysisPanel').classList.remove('active');
+            document.getElementById('comboPanel').classList.remove('active');
+            document.getElementById('comboPanel').innerHTML = '';
+        }
+
+        // ── Combination Analysis ────────────────────
+        async function analyzeCombination() {
+            const d1 = document.getElementById('comboDrug1').value.trim();
+            const d2 = document.getElementById('comboDrug2').value.trim();
+            const d3 = document.getElementById('comboDrug3').value.trim();
+            if (!d1 || !d2) { alert('Please enter at least 2 drugs'); return; }
+
+            const drugNames = [d1, d2];
+            if (d3) drugNames.push(d3);
+
+            document.getElementById('welcomePanel').style.display = 'none';
+            document.getElementById('analysisPanel').classList.remove('active');
+            document.getElementById('loadingPanel').classList.add('active');
+            document.getElementById('comboPanel').classList.remove('active');
+
+            try {
+                const res = await fetch(`${API}/api/predict_combination`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ drug_names: drugNames, top_k: 25, threshold: 0.1 })
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.detail || 'Combination analysis failed');
+                }
+                const data = await res.json();
+                renderComboResults(data);
+            } catch (e) {
+                alert('Error: ' + e.message);
+                document.getElementById('loadingPanel').classList.remove('active');
+                document.getElementById('welcomePanel').style.display = 'block';
+            }
+        }
+
+        function renderComboResults(data) {
+            document.getElementById('loadingPanel').classList.remove('active');
+            const panel = document.getElementById('comboPanel');
+            panel.classList.add('active');
+
+            // Drug names header
+            const drugLabels = data.drugs.map(d => d.name).join(' + ');
+
+            // DDI Warnings
+            let ddiHtml = '';
+            if (data.known_interactions.length > 0) {
+                ddiHtml = data.known_interactions.map(int => `
+                    <div class="ddi-warning">
+                        <span class="icon">&#9888;&#65039;</span>
+                        <div>
+                            <strong>Known Drug Interaction Detected</strong><br>
+                            <span style="color:var(--text-secondary)">${int.drug_a} \u2194 ${int.drug_b} have a documented interaction in the database</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Side effects with synergy
+            let seHtml = '';
+            if (data.side_effects.length > 0) {
+                seHtml = data.side_effects.map(se => {
+                    const indivHtml = Object.entries(se.individual_scores).map(([name, score]) =>
+                        `<span class="individual-score-tag">${name}: ${(score * 100).toFixed(1)}%</span>`
+                    ).join('');
+                    const synergyBadge = se.interaction_amplified
+                        ? `<span class="synergy-badge amplified">\u26a0 Amplified +${(se.synergy_score * 100).toFixed(1)}%</span>`
+                        : '';
+                    return `
+                        <div class="se-item" style="${se.interaction_amplified ? 'border-color: rgba(239,68,68,0.3);' : ''}">
+                            <span class="se-name">${se.name}${synergyBadge}</span>
+                            <div class="se-bar-container">
+                                <div class="se-bar ${se.risk_level}" style="width:${se.probability * 100}%"></div>
+                            </div>
+                            <span class="se-prob ${se.risk_level}">${(se.probability * 100).toFixed(1)}%</span>
+                            <span class="risk-badge ${se.risk_level}">${se.risk_level}</span>
+                        </div>
+                        <div class="individual-scores" style="padding-left: 1rem; margin-bottom: 0.4rem;">${indivHtml}</div>
+                    `;
+                }).join('');
+            } else {
+                seHtml = '<div class="empty-state">No significant combined side effects above threshold</div>';
+            }
+
+            panel.innerHTML = `
+                <div class="drug-header">
+                    <div>
+                        <div class="drug-name">${drugLabels}</div>
+                        <div class="drug-id">Polypharmacy Combination Analysis</div>
+                    </div>
+                </div>
+                ${ddiHtml}
+                <div class="combo-summary-grid">
+                    <div class="combo-summary-card">
+                        <div class="value blue">${data.drugs.length}</div>
+                        <div class="label">Drugs Combined</div>
+                    </div>
+                    <div class="combo-summary-card">
+                        <div class="value" style="color:var(--accent-red)">${data.summary.amplified_by_combination}</div>
+                        <div class="label">Interaction-Amplified</div>
+                    </div>
+                    <div class="combo-summary-card">
+                        <div class="value" style="color:var(--accent-amber)">${data.summary.known_ddi_count}</div>
+                        <div class="label">Known DDI Pairs</div>
+                    </div>
+                </div>
+                <div class="results-card">
+                    <div class="section-title">
+                        <span class="icon">&#9888;&#65039;</span> Combined Side-Effect Profile
+                    </div>
+                    <div class="se-list">${seHtml}</div>
+                </div>
+            `;
+        }
+
+        // ── Init ────────────────────────────────────
+        loadStats();
+    </script>
+</body>
+
+</html>

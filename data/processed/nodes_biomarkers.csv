@@ -1,0 +1,145 @@
+biomarker_key,gene_symbol,defining_change,protein_name,uniprot_id,node_idx
+FCGR2A||H allelle,FCGR2A,H allelle,Low affinity immunoglobulin gamma Fc region receptor II-a,P12318,0
+FCGR3A||G > T,FCGR3A,G > T,Low affinity immunoglobulin gamma Fc region receptor III-A,P08637,1
+IFNL3||C > T,IFNL3,C > T,Interferon lambda-3,Q8IZI9,2
+FCGR3A||CC Allele (homozygous),FCGR3A,CC Allele (homozygous),Low affinity immunoglobulin gamma Fc region receptor III-A,P08637,3
+"ERBB2||G Allele, heterozygote",ERBB2,"G Allele, heterozygote",Receptor tyrosine-protein kinase erbB-2,P04626,4
+FCGR3A||T > G,FCGR3A,T > G,Low affinity immunoglobulin gamma Fc region receptor III-A,P08637,5
+KIF6||C Allele,KIF6,C Allele,Kinesin-like protein KIF6,Q6ZMV9,6
+HMGCR||T Allele,HMGCR,T Allele,3-hydroxy-3-methylglutaryl-coenzyme A reductase,P04035,7
+CYP2D6||2549delA,CYP2D6,2549delA,Cytochrome P450 2D6,P10635,8
+CYP2D6||A allele,CYP2D6,A allele,Cytochrome P450 2D6,P10635,9
+CYP2D6||Whole-gene deletion,CYP2D6,Whole-gene deletion,Cytochrome P450 2D6,P10635,10
+CYP2D6||1707delT,CYP2D6,1707delT,Cytochrome P450 2D6,P10635,11
+CYP2D6||G allele,CYP2D6,G allele,Cytochrome P450 2D6,P10635,12
+CYP2D6||3877G>A,CYP2D6,3877G>A,Cytochrome P450 2D6,P10635,13
+"ACE||A Allele, homozygote",ACE,"A Allele, homozygote",Angiotensin-converting enzyme,P12821,14
+CYP1A2||C allele,CYP1A2,C allele,Cytochrome P450 1A2,P05177,15
+ACE||Alu insertions,ACE,Alu insertions,Angiotensin-converting enzyme,P12821,16
+"GNB3||T allele, homozygote",GNB3,"T allele, homozygote",Guanine nucleotide-binding protein G(I)/G(S)/G(T) subunit beta-3,P16520,17
+ABCB1||C Allele,ABCB1,C Allele,Multidrug resistance protein 1,P08183,18
+HTR2A||A Allele,HTR2A,A Allele,5-hydroxytryptamine receptor 2A,P28223,19
+GRIK4||C Allele,GRIK4,C Allele,"Glutamate receptor ionotropic, kainate 4",Q16099,20
+"GRIK2||C Allele, homozygote",GRIK2,"C Allele, homozygote","Glutamate receptor ionotropic, kainate 2",Q13002,21
+GRIA3||G allele,GRIA3,G allele,Glutamate receptor 3,P42263,22
+"CREB1||T allele, homozygous",CREB1,"T allele, homozygous",Cyclic AMP-responsive element-binding protein 1,P16220,23
+GNB3||T Allele,GNB3,T Allele,Guanine nucleotide-binding protein G(I)/G(S)/G(T) subunit beta-3,P16520,24
+CYP2C9||C Allele,CYP2C9,C Allele,Cytochrome P450 2C9,P11712,25
+HLA-B||HLA-B*15,HLA-B,HLA-B*15,"HLA class I histocompatibility antigen, B-15 alpha chain",P30464,26
+ADRB1||A Allele,ADRB1,A Allele,Beta-1 adrenergic receptor,P08588,27
+ADRB1||G > C,ADRB1,G > C,Beta-1 adrenergic receptor,P08588,28
+CYP1A2||A Allele,CYP1A2,A Allele,Cytochrome P450 1A2,P05177,29
+CYP2D6||A Allele,CYP2D6,A Allele,Cytochrome P450 2D6,P10635,30
+CYP2D6||T deletion,CYP2D6,T deletion,Cytochrome P450 2D6,P10635,31
+"CYP2D6||Whole gene deletion, homozygote",CYP2D6,"Whole gene deletion, homozygote",Cytochrome P450 2D6,P10635,32
+ABCB1||T > C,ABCB1,T > C,Multidrug resistance protein 1,P08183,33
+"CYP2D6||A Allele, homozygote",CYP2D6,"A Allele, homozygote",Cytochrome P450 2D6,P10635,34
+CYP2D6||Whole Gene Deletion,CYP2D6,Whole Gene Deletion,Cytochrome P450 2D6,P10635,35
+"CYP2D6||T deletion, homozygote",CYP2D6,"T deletion, homozygote",Cytochrome P450 2D6,P10635,36
+BLMH||G Allele,BLMH,G Allele,Bleomycin hydrolase,Q13867,37
+ABCB1||T Allele,ABCB1,T Allele,Multidrug resistance protein 1,P08183,38
+OPRM1||A Allele,OPRM1,A Allele,Mu-type opioid receptor,P35372,39
+POLG||G > A,POLG,G > A,DNA polymerase subunit gamma-1,P54098,40
+POLG||G > C,POLG,G > C,DNA polymerase subunit gamma-1,P54098,41
+EGFR||T > G,EGFR,T > G,Epidermal growth factor receptor,P00533,42
+EGFR||G > A or C or T,EGFR,G > A or C or T,Epidermal growth factor receptor,P00533,43
+EGFR||T > A or G,EGFR,T > A or G,Epidermal growth factor receptor,P00533,44
+ABCG2||A allele,ABCG2,A allele,ATP-binding cassette sub-family G member 2,Q9UNQ0,45
+CYP2C19||G > A,CYP2C19,G > A,Cytochrome P450 2C19,P33261,46
+CYP2C19||681G>A,CYP2C19,681G>A,Cytochrome P450 2C19,P33261,47
+CYP2C19||636G>A,CYP2C19,636G>A,Cytochrome P450 2C19,P33261,48
+HTR1A||CC Allele (homozygous),HTR1A,CC Allele (homozygous),5-hydroxytryptamine receptor 1A,P08908,49
+"CYP2C19||A Allele, homozygote",CYP2C19,"A Allele, homozygote",Cytochrome P450 2C19,P33261,50
+ADRB1||C > G,ADRB1,C > G,Beta-1 adrenergic receptor,P08588,51
+CYP2C19||G > A/C,CYP2C19,G > A/C,Cytochrome P450 2C19,P33261,52
+TPMT||G Allele,TPMT,G Allele,Thiopurine S-methyltransferase,P51580,53
+TPMT||A Allele,TPMT,A Allele,Thiopurine S-methyltransferase,P51580,54
+TPMT||G > A,TPMT,G > A,Thiopurine S-methyltransferase,P51580,55
+GNB3||TT allele,GNB3,TT allele,Guanine nucleotide-binding protein G(I)/G(S)/G(T) subunit beta-3,P16520,56
+NPPA||AA allele,NPPA,AA allele,Natriuretic peptides A,P01160,57
+HCP5||G allele,HCP5,G allele,HLA class I histocompatibility antigen protein P5,Q6MZN7,58
+"RRM1||A allele, homozygous",RRM1,"A allele, homozygous",Ribonucleoside-diphosphate reductase large subunit,P23921,59
+"ABCB1||C Allele,  heterozygote",ABCB1,"C Allele,  heterozygote",Multidrug resistance protein 1,P08183,60
+GSTM1||presence of functional GSTM1,GSTM1,presence of functional GSTM1,Glutathione S-transferase Mu 1,P09488,61
+LRP2||UNKNOWN,LRP2,UNKNOWN,Low-density lipoprotein receptor-related protein 2,P98164,62
+GSTP1||UNKNOWN,GSTP1,UNKNOWN,Glutathione S-transferase P,P09211,63
+XPC||UNKNOWN,XPC,UNKNOWN,DNA repair protein complementing XP-C cells,Q01831,64
+CYP3A4||G Allelle,CYP3A4,G Allelle,Cytochrome P450 3A4,P08684,65
+CYP2B6||C Allelle,CYP2B6,C Allelle,Cytochrome P450 2B6,P20813,66
+CYP2C19||T > C,CYP2C19,T > C,Cytochrome P450 2C19,P33261,67
+CYP2C19||T > A,CYP2C19,T > A,Cytochrome P450 2C19,P33261,68
+TYMS||(CCGCGCCACTTCGCCTGCCTCCGTCCCG)2/3/4,TYMS,(CCGCGCCACTTCGCCTGCCTCCGTCCCG)2/3/4,Thymidylate synthase,P04818,69
+DPYD||C allele,DPYD,C allele,Dihydropyrimidine dehydrogenase [NADP(+)],Q12882,70
+GSTP1||A allele,GSTP1,A allele,Glutathione S-transferase P,P09211,71
+DPYD||A allele,DPYD,A allele,Dihydropyrimidine dehydrogenase [NADP(+)],Q12882,72
+DPYD||T > A,DPYD,T > A,Dihydropyrimidine dehydrogenase [NADP(+)],Q12882,73
+DPYD||G > A,DPYD,G > A,Dihydropyrimidine dehydrogenase [NADP(+)],Q12882,74
+DPYD||A > C,DPYD,A > C,Dihydropyrimidine dehydrogenase [NADP(+)],Q12882,75
+DPYD||A > G,DPYD,A > G,Dihydropyrimidine dehydrogenase [NADP(+)],Q12882,76
+DPYD||T > C,DPYD,T > C,Dihydropyrimidine dehydrogenase [NADP(+)],Q12882,77
+ABCC2||T allele,ABCC2,T allele,Canalicular multispecific organic anion transporter 1,Q92887,78
+MTHFR||T allele,MTHFR,T allele,Methylenetetrahydrofolate reductase,P42898,79
+SCN1A||IVS5N + 5 G>A,SCN1A,IVS5N + 5 G>A,Sodium channel protein type 1 subunit alpha,P35498,80
+HSPA1L||T allele,HSPA1L,T allele,Heat shock 70 kDa protein 1-like,P34931,81
+HSPA1A||C allele,HSPA1A,C allele,Heat shock 70 kDa protein 1A/1B,P08107,82
+HLA-B||T allele,HLA-B,T allele,"HLA class I histocompatibility antigen, B-15 alpha chain",P30464,83
+HLA-A||G allele,HLA-A,G allele,"HLA class I histocompatibility antigen, A-31 alpha chain",P16189,84
+MLN||A allele,MLN,A allele,Promotilin,P12872,85
+FLOT1||G > C,FLOT1,G > C,Flotillin-1,O75955,86
+MUC21||G>A,MUC21,G>A,Mucin-21,Q5SSG8,87
+HLA-A||A > T,HLA-A,A > T,"HLA class I histocompatibility antigen, A-3 alpha chain",P04439,88
+CYP2C19||C > T,CYP2C19,C > T,Cytochrome P450 2C19,P33261,89
+CYP2B6||G > T,CYP2B6,G > T,Cytochrome P450 2B6,P20813,90
+SLCO1B1||T > C,SLCO1B1,T > C,Solute carrier organic anion transporter family member 1B1,Q9Y6L6,91
+F5||A allele,F5,A allele,Coagulation factor V,P12259,92
+CYP2C9||T Allele,CYP2C9,T Allele,Cytochrome P450 2C9,P11712,93
+VKORC1||-1639G>A,VKORC1,-1639G>A,Vitamin K epoxide reductase complex subunit 1,Q9BQB6,94
+"CYP4F2||T Allele, homozygous",CYP4F2,"T Allele, homozygous",Phylloquinone omega-hydroxylase CYP4F2,P78329,95
+CYP1B1||G allele,CYP1B1,G allele,Cytochrome P450 1B1,Q16678,96
+HNRNPD||A allele,HNRNPD,A allele,Heterogeneous nuclear ribonucleoprotein D0,Q14103,97
+SEC14L3||T allele,SEC14L3,T allele,SEC14-like protein 3,Q9UDX4,98
+IKBKE||A allele,IKBKE,A allele,Inhibitor of nuclear factor kappa-B kinase subunit epsilon,Q14164,99
+RARG||C>T,RARG,C>T,Retinoic acid receptor gamma,P13631,100
+SLC28A3||G > A,SLC28A3,G > A,Solute carrier family 28 member 3,Q9HAS3,101
+UGT1A6||G > T,UGT1A6,G > T,UDP-glucuronosyltransferase 1-6,P19224,102
+OPRM1||A > G,OPRM1,A > G,Mu-type opioid receptor,P35372,103
+COMT||AA allele,COMT,AA allele,Catechol O-methyltransferase,P21964,104
+COMT||GG allele,COMT,GG allele,Catechol O-methyltransferase,P21964,105
+SLCO1B1||C Allele,SLCO1B1,C Allele,Solute carrier organic anion transporter family member 1B1,Q9Y6L6,106
+UGT1A1||extra TA in promoter,UGT1A1,extra TA in promoter,UDP-glucuronosyltransferase 1-1,P22309,107
+UGT1A7||G allele,UGT1A7,G allele,UDP-glucuronosyltransferase 1-7,Q9HAW7,108
+UGT1A1||A Allele,UGT1A1,A Allele,UDP-glucuronosyltransferase 1-1,P22309,109
+"UGT1A1||extra TA in promoter, homozygous",UGT1A1,"extra TA in promoter, homozygous",UDP-glucuronosyltransferase 1-1,P22309,110
+CYP2D6||C > G,CYP2D6,C > G,Cytochrome P450 2D6,P10635,111
+CYP3A5||Functional gene,CYP3A5,Functional gene,Cytochrome P450 3A5,P20815,112
+ABCB1||T Allele (G2677T),ABCB1,T Allele (G2677T),Multidrug resistance protein 1,P08183,113
+CYP2D6||Gene duplication.,CYP2D6,Gene duplication.,Cytochrome P450 2D6,P10635,114
+ITGB3||T > C,ITGB3,T > C,Integrin beta-3,P05106,115
+LTC4S||C allele,LTC4S,C allele,Leukotriene C4 synthase,Q16873,116
+VKORC1||G > A,VKORC1,G > A,Vitamin K epoxide reductase complex subunit 1,Q9BQB6,117
+CYP2E1||UNKNOWN,CYP2E1,UNKNOWN,Cytochrome P450 2E1,P05181,118
+UGT1A1||TA pair insertion,UGT1A1,TA pair insertion,UDP-glucuronosyltransferase 1-1,P22309,119
+"UGT1A1||G > A, homozygous",UGT1A1,"G > A, homozygous",UDP-glucuronosyltransferase 1-1,P22309,120
+CYP3A4||A > G,CYP3A4,A > G,Cytochrome P450 3A4,P08684,121
+ABCG2||G > T,ABCG2,G > T,ATP-binding cassette sub-family G member 2,Q9UNQ0,122
+GNB3||C > T,GNB3,C > T,Guanine nucleotide-binding protein G(I)/G(S)/G(T) subunit beta-3,P16520,123
+KCNH2||KCNE2,KCNH2,KCNE2,Potassium voltage-gated channel subfamily H member 2,Q12809,124
+"ADRB1||C Allele, homozygous",ADRB1,"C Allele, homozygous",Beta-1 adrenergic receptor,P08588,125
+"DRD2||C Allele, homozygous",DRD2,"C Allele, homozygous",D(2) dopamine receptor,P14416,126
+SLC6A4||A allele,SLC6A4,A allele,Sodium-dependent serotonin transporter,P31645,127
+TBX21||CG allele (heterozygotes),TBX21,CG allele (heterozygotes),T-box transcription factor TBX21,Q9UL17,128
+KCNH2||A > C,KCNH2,A > C,Potassium voltage-gated channel subfamily H member 2,Q12809,129
+ADRA1D||A > T,ADRA1D,A > T,Alpha-1D adrenergic receptor,P25100,130
+CYP2D6||G > A,CYP2D6,G > A,Cytochrome P450 2D6,P10635,131
+KCNH2||G > A,KCNH2,G > A,Potassium voltage-gated channel subfamily H member 2,Q12809,132
+ABCC2||G Allele,ABCC2,G Allele,Canalicular multispecific organic anion transporter 1,Q92887,133
+HLA-DQA1||HLA-DQA1*02,HLA-DQA1,HLA-DQA1*02,"HLA class II histocompatibility antigen, DQ alpha 1 chain",P01909,134
+HLA-DRB1||HLA-DRB1*07,HLA-DRB1,HLA-DRB1*07,"HLA class II histocompatibility antigen, DRB1-11 beta chain",P20039,135
+HLA-DQB1||HLA-DQB1*02,HLA-DQB1,HLA-DQB1*02,"HLA class II histocompatibility antigen, DQ beta 1 chain",P01920,136
+TNXB||T > C,TNXB,T > C,Tenascin-X,P22105,137
+CYP3A4||G > A,CYP3A4,G > A,Cytochrome P450 3A4,P08684,138
+PICK1||T allele,PICK1,T allele,PRKCA-binding protein,Q9NRD5,139
+UGT1A1||A > C,UGT1A1,A > C,UDP-glucuronosyltransferase 1-1,P22309,140
+SERPINC1||C > T,SERPINC1,C > T,Antithrombin-III,P01008,141
+"CFTR||A allele (G > A), double homozygote",CFTR,"A allele (G > A), double homozygote",Cystic fibrosis transmembrane conductance regulator,P13569,142
+UGT1A1||G > A,UGT1A1,G > A,UDP-glucuronosyltransferase 1-1,P22309,143

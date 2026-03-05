@@ -1,0 +1,318 @@
+source,target,biomarker_type,label,description
+67,6,snp-effect,adverse,Patients with this genotype have a greater reduction in risk of a major cardiovascular event with high dose pravastatin.
+67,7,snp-effect,efficacy,Patients with this genotype have a lesser reduction in LDL cholesterol with pravastatin.
+68,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of fluvoxamine.
+68,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of fluvoxamine.
+68,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of fluvoxamine.
+68,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of fluvoxamine.
+68,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of fluvoxamine.
+68,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of fluvoxamine.
+70,14,snp-effect,efficacy,Patients with this genotype have a shorter time to lowering of blood pressure with ramipril
+93,15,adverse-reaction,adverse,Patients with this genotype have increased risk of a non-fatal myocardial infarction with caffeine
+95,16,snp-effect,efficacy,Patients with this genotype have increased frequency of positive erectile response when using sildenafil to treat erectile dysfunction
+95,17,snp-effect,efficacy,Patients with this genotype have increased frequency of positive erectile response when using sildenafil to treat erectile dysfunction
+107,18,snp-effect,efficacy,Patients with this genotype have an increased likelihood of remission when using citalopram to treat major depressive disorder
+107,19,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to citalopram when treating major depressive disorder
+107,20,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to citalopram when treating major depressive disorder
+107,21,adverse-reaction,adverse,Patients with this genotype have increased frequency of suicidal ideation with citalopram
+107,22,adverse-reaction,adverse,Patients with this genotype have increased frequency of suicidal ideation with citalopram
+107,23,adverse-reaction,adverse,Male patients with this genotype have an increased risk of (condition: suicide) with (drug: citalopram).
+108,24,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to elitriptan when treating (condition: cluster headache).
+144,25,snp-effect,efficacy,Patients with this genotype have reduced metabolism of phenytoin.
+144,26,adverse-reaction,adverse,The presence of this genotype in HLA-B is associated with an increased risk of Stevens-Johnson syndrome and toxic epidermal necrolysis when treated with phenytoin.
+156,27,snp-effect,efficacy,Patients with this genotype have a greater reduction in blood pressure with metoprolol.
+156,9,snp-effect,efficacy,Patients with this genotype have reduced metabolism of metoprolol.
+156,28,snp-effect,efficacy,Patients with this genotype have a greater reduction in blood pressure with metoprolol.
+169,29,snp-effect,efficacy,Patients with this genotype have reduced metabolism of theophylline.
+177,30,snp-effect,efficacy,Patients with this genotype have reduced metabolism of venlafaxine.
+177,31,snp-effect,efficacy,Patients with this genotype have reduced metabolism of venlafaxine.
+177,32,snp-effect,efficacy,Patients with this genotype have reduced metabolism of venlafaxine.
+177,18,snp-effect,efficacy,Patients with this genotype have an increased likelihood of remission when using venlafaxine to treat major depressive disorder
+177,33,snp-effect,adverse,Patients with this genotype have increased risk of adverse events with venlafaxine
+180,8,snp-effect,adverse,The presence of this genotype in CYP2D6 may be associated with reduced metabolism of atomoxetine and more frequent occurrence of adverse events.
+180,34,snp-effect,adverse,The presence of this genotype in CYP2D6 is associated with poor metabolism of atomoxetine and more frequent occurrence of adverse events.
+180,35,snp-effect,adverse,The presence of this genotype in CYP2D6 is associated with poor metabolism of atomoxetine and more frequent occurrence of adverse events.
+180,36,snp-effect,adverse,The presence of this genotype in CYP2D6 is associated with poor metabolism of atomoxetine and more frequent occurrence of adverse events.
+180,12,snp-effect,adverse,The presence of this genotype in CYP2D6 may be associated with reduced metabolism of atomoxetine and more frequent occurrence of adverse events.
+180,13,snp-effect,adverse,The presence of this genotype in CYP2D6 may be associated with reduced metabolism of atomoxetine and more frequent occurrence of adverse events.
+181,37,snp-effect,efficacy,Patients with this genotype have reduced survival time and increased frequency of early relapse when using bleomycin to treat testicular cancer.
+186,38,snp-effect,efficacy,Patients with this genotype may have an increased analgesic response to morphine.
+186,39,snp-effect,efficacy,Patients with this genotype may have an increased analgesic response to morphine.
+204,40,adverse-reaction,adverse,The presence of this polymorphism in POLG may indicate an increased risk of liver failure and death when treated with valproic acid.
+204,41,adverse-reaction,adverse,The presence of this polymorphism in POLG may indicate an increased risk of liver failure and death when treated with valproic acid.
+206,24,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to zolmitriptan when treating (condition: cluster headache).
+208,42,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to gefitinib.
+208,43,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to gefitinib.
+208,44,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to gefitinib.
+208,45,adverse-reaction,adverse,Patients with this genotype have an increased risk of diarrhea with gefitinib.
+209,34,snp-effect,efficacy,Patients with this genotype have reduced metabolism of codeine.
+209,36,snp-effect,efficacy,Patients with this genotype have reduced metabolism of codeine.
+209,32,snp-effect,efficacy,Patients with this genotype have reduced metabolism of codeine.
+209,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 results in non-functioning enzyme variant and may be associated with reduced drug mtabolism or reduced therapeutic response when treated with codeine.
+209,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of codeine.
+209,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of codeine and lack of therapeutic response from codeine.
+209,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of codeine.
+209,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 results in non-functioning enzyme variant and may be associated with reduced therapeutic response when treated with codeine.
+209,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 results in non-functioning enzyme variant and may be associated with reduced therapeutic response when treated with codeine.
+212,30,snp-effect,efficacy,Patients with this genotype have reduced metabolism of amitriptyline.
+212,18,snp-effect,efficacy,Patients with this genotype have an increased likelihood of remission when using amitriptyline to treat major depressive disorder
+212,46,snp-effect,efficacy,Patients with this genotype have reduced metabolism of amitriptyline.
+212,33,snp-effect,adverse,Patients with this genotype have increased risk of adverse events with amitriptyline
+212,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of amitriptyline.
+212,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of amitriptyline.
+212,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of amitriptyline.
+212,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of amitriptyline.
+212,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with poor metabolism of amitriptyline.
+212,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of amitriptyline.
+212,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of amitriptyline.
+212,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of amitriptyline.
+224,49,snp-effect,efficacy,The presence of this polymorphism in HTR1A may indicate a higher level of efficacy in improving negative symptoms of schizophrenia when treated with olanzapine.
+225,28,snp-effect,efficacy,Patients with this genotype have a greater reduction in blood pressure with atenolol.
+228,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of omeprazole.
+228,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of omeprazole.
+233,51,snp-effect,efficacy,Patients with this genotype require a lower dosage of diltiazem to achieve a favourable rate-control response when treating atrial fibrillation.
+239,52,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of clobazam.
+242,53,adverse-reaction,adverse,The presence of this polymorphism in TPMT may be associated with an increased risk of developing rapid bone marrow suppression when treated with tioguanine.
+242,54,adverse-reaction,adverse,The presence of this polymorphism in TPMT may be associated with an increased risk of developing rapid bone marrow suppression when treated with tioguanine.
+242,53,adverse-reaction,adverse,The presence of this polymorphism in TPMT may be associated with an increased risk of developing rapid bone marrow suppression when treated with tioguanine.
+242,55,adverse-reaction,adverse,The presence of this polymorphism in TPMT may be associated with an increased risk of developing rapid bone marrow suppression when treated with tioguanine.
+252,56,adverse-reaction,adverse,Patients with this genotype have increased weight gain with clozapine.
+269,57,snp-effect,adverse,Patients with this genotype have increased risk of adverse cardiovascular outcomes with diuretics.
+323,58,adverse-reaction,adverse,Patients who carry this allele are at a higher risk of experiencing severe cutaneous adverse reactions when treated with allopurinol.
+327,59,adverse-reaction,adverse,Patients with this genotype have increased risk of neutropenia and neurotoxicity with gemcitabine.
+334,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of lansoprazole.
+334,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of lansoprazole.
+334,60,snp-effect,efficacy,Patients with this genotype have increased plasma concentration of lansoprazole.
+344,30,snp-effect,efficacy,Patients with this genotype have reduced metabolism of imipramine.
+344,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of imipramine.
+344,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of imipramine.
+344,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of imipramine.
+344,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of imipramine.
+344,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with poor metabolism of imipramine.
+344,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of imipramine.
+344,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of imipramine.
+344,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of imipramine.
+367,25,snp-effect,efficacy,Patients with this genotype have reduced metabolism of celecoxib.
+397,34,snp-effect,efficacy,Patients with this genotype have reduced metabolism of dextromethorphan.
+397,36,snp-effect,efficacy,Patients with this genotype have reduced metabolism of dextromethorphan.
+398,61,adverse-reaction,adverse,Patients with this genotype have increased risk of ototoxicity with [durg: cisplatin].
+398,62,adverse-reaction,adverse,Patients with this genotype have increased risk of ototoxicity with [durg: cisplatin].
+398,63,adverse-reaction,adverse,Patients with this genotype have increased risk of ototoxicity with [durg: cisplatin].
+398,64,adverse-reaction,adverse,Patients with this genotype have increased risk of ototoxicity with [durg: cisplatin].
+412,43,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to erlotinib.
+412,44,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to erlotinib.
+412,42,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to erlotinib.
+413,65,snp-effect,efficacy,Patients with this genotype have reduced metabolism of cyclophosphamide to its active form and reduced disease free survival time when using cyclophosphamide to treat node-positive breast cancer.
+413,66,snp-effect,efficacy,Patients with this genotype have reduced metabolism of cyclophosphamide to its active form.
+414,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of mephenytoin.
+414,67,snp-effect,efficacy,Patients with this genotype have reduced metabolism of mephenytoin.
+414,68,snp-effect,efficacy,Patients with this genotype have reduced metabolism of mephenytoin.
+422,30,snp-effect,efficacy,Patients with this genotype have reduced metabolism of nortriptyline.
+422,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of nortriptyline.
+422,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of nortriptyline.
+422,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of nortriptyline.
+422,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of nortriptyline.
+422,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of nortriptyline.
+422,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of nortriptyline.
+426,69,adverse-reaction,adverse,Patients with this genotype have increased risk of severe neutropenia or severe diarrhea with [drug; fluorouracil].
+426,70,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of fluorouracil and increased risk of toxicity.
+426,71,adverse-reaction,adverse,Patients with this genotype have increased risk of toxicity with fluorouracil
+426,72,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of fluorouracil and increased risk of toxicity.
+426,73,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of fluorouracil and increased risk of toxicity.
+426,74,adverse-reaction,adverse,The presence of this genotype in DPYD is associated with an increased risk of drug-related toxicity from fluorouracil therapy.
+426,75,adverse-reaction,adverse,The presence of this genotype in DPYD is associated with an increased risk of drug-related toxicity from fluorouracil therapy.
+426,73,adverse-reaction,adverse,The presence of this genotype in DPYD is associated with an increased risk of drug-related toxicity from fluorouracil therapy.
+426,74,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from fluorouracil therapy.
+426,76,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from fluorouracil therapy.
+426,74,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from fluorouracil therapy.
+426,77,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from fluorouracil therapy.
+445,78,adverse-reaction,adverse,Patients with this genotype have increased risk of toxicity with methotrexate.
+445,79,adverse-reaction,adverse,Patients with this genotype have increased risk of toxicity with methotrexate.
+446,80,snp-effect,efficacy,Patients with this genotype have increased resistance to the anti-epileptic effects of carbamazepine.
+446,81,adverse-reaction,adverse,Patients with this genotype have increased risk of cutaneous hypersensitivity reactions with carbamazepine.
+446,82,adverse-reaction,adverse,Patients with this genotype have increased risk of cutaneous hypersensitivity reactions with carbamazepine.
+446,83,adverse-reaction,adverse,Patients with this genotype have increased risk of cutaneous hypersensitivity reactions with carbamazepine.
+446,84,adverse-reaction,adverse,Patients with this genotype have increased risk of cutaneous hypersensitivity reactions with carbamazepine.
+446,85,adverse-reaction,adverse,Patients with this genotype have increased risk of cutaneous hypersensitivity reactions with carbamazepine.
+446,86,adverse-reaction,adverse,"Taiwanese, Chinese, Indians, and Chinese–American patients with this genotype have increased risk of Stevens-Johnson syndrome or toxic epidermal necrolysis with carbamazepine."
+446,87,adverse-reaction,adverse,"Taiwanese, Chinese, Indians, and Chinese–American patients with this genotype have increased risk of Stevens-Johnson syndrome or toxic epidermal necrolysis with carbamazepine."
+446,26,adverse-reaction,adverse,Patients who carry this allele may be at an increased risk of Stevens-Johnson Syndrome and toxic epidermal necrolysis when treated with carbamazepine.
+446,88,adverse-reaction,adverse,Patients who carry this genotype in HLA-A are at a higher risk of experiencing a hypersensitivity reaction to carbamazepine.
+464,89,snp-effect,efficacy,Patients with this genotype in CYP2C19 are ultra fast metabolizers and require higer doses of voriconazole to attain the therapeutic effect.
+464,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with poor metabolism of voriconazole.
+464,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of voriconazole.
+507,90,snp-effect,efficacy,The presence of this polymorphism in CYP2B6 is associated with reduction in efavirenz metabolism.
+522,6,snp-effect,adverse,Patients with this genotype have a greater reduction in risk of a major cardiovascular event with high dose simvastatin.
+522,7,snp-effect,efficacy,Patients with this genotype have a lesser reduction in LDL cholesterol with simvastatin.
+522,91,adverse-reaction,adverse,The presence of this genotype in SLCO1B1 is associated with an increased risk of myopathy when treated with simvastatin.
+541,28,snp-effect,efficacy,Patients with this genotype require a lower dosage of verapamil to achieve a favourable rate-control response when treating atrial fibrillation.
+548,24,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to sumatriptan when treating (condition: cluster headache).
+554,34,snp-effect,efficacy,Patients with this genotype have reduced metabolism of tamoxifen resulting in reduced plasma concentrations its active form endoxifen.
+554,92,adverse-reaction,adverse,Patients with this genotype have increased risk of a thromboembolic event with tamoxifen.
+561,93,snp-effect,efficacy,Patients with this genotype have reduced metabolism of warfarin.
+561,94,snp-effect,adverse,Patients with this genotype in VKORC1 are associated with reduced metabolism of warfarin and increased risk of serious bleeding thus require lower doses.
+561,95,snp-effect,efficacy,Patients with this genotype in CP4F2 may require higer doses of warfarin to attain therapeutic anticoagulant activity.
+561,93,snp-effect,efficacy,The presence of this polymorphism in CYP2C9 is associated with reduction in warfarin metabolism.
+561,25,snp-effect,efficacy,The presence of this polymorphism in CYP2C9 is associated with reduction in warfarin metabolism.
+573,96,adverse-reaction,adverse,The presence of this genotype in CYP1B1 may be associated with an increased risk of drug-induced cytotoxicity from daunorubicin therapy.
+573,97,adverse-reaction,adverse,The presence of this genotype in HNRNPD may be associated with an increased risk of drug-induced cytotoxicity from daunorubicin therapy.
+573,98,adverse-reaction,adverse,The presence of this genotype in SEC14L3 may be associated with an increased risk of drug-induced cytotoxicity from daunorubicin therapy.
+573,99,adverse-reaction,adverse,The presence of this genotype in IKBKE may be associated with an increased risk of drug-induced cytotoxicity from daunorubicin therapy.
+573,100,adverse-reaction,adverse,Pediatric patients who carry this genotype may be at a higher risk of experiencing anthracycline-induced cardiotoxicity when treated with daunorubicin.
+573,101,adverse-reaction,adverse,Pediatric patients who carry this genotype may be at a higher risk of experiencing anthracycline-induced cardiotoxicity when treated with daunorubicin.
+573,102,adverse-reaction,adverse,Pediatric patients who carry this genotype may be at a higher risk of experiencing anthracycline-induced cardiotoxicity when treated with daunorubicin.
+582,103,snp-effect,efficacy,Patients with this genotype have an increased number of abstinent days when using naltrexone to treat alcohol addiction.
+592,18,snp-effect,efficacy,Patients with this genotype have an increased likelihood of remission when using paroxetine to treat major depressive disorder.
+592,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of paroxetine.
+592,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of paroxetine.
+592,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of paroxetine.
+592,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of paroxetine.
+592,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of paroxetine.
+592,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of paroxetine.
+603,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of trimipramine.
+603,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of trimipramine.
+603,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of trimipramine.
+603,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of trimipramine.
+603,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with poor metabolism of trimipramine.
+603,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of trimipramine.
+603,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of trimipramine.
+603,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with poor metabolism of trimipramine.
+612,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of esomeprazole.
+612,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of esomeprazole.
+621,104,snp-effect,efficacy,Patients with this genotype have reduced improvement in vigor and well-being with modafinil.
+621,105,snp-effect,efficacy,Patients with this genotype have increased improvement in vigor and well-being with modafinil.
+634,25,snp-effect,efficacy,Patients with this genotype have reduced metabolism of clopidogrel resulting in reduced plasma concentrations of its active metabolite.
+634,46,snp-effect,efficacy,Patients with this genotype have reduced metabolism of clopidogrel resulting in reduced plasma concentrations of its active metabolite.
+634,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of clopidogrel.
+634,47,adverse-reaction,adverse,Patients with this polymorphism in CYP2C19 are poor metabolizers of clopidogrel and are associated with diminished platelet response and increased risk of adverse cardiovascular events in response to clopidogrel therapy.
+638,106,snp-effect,efficacy,Patients with this genotype have reduced transport of the active metabolite of irinotecan resulting in increased plasma concentrations.
+638,107,adverse-reaction,adverse,The presence of this genotype in UGT1A1 may indicate an increased risk of bone marrow toxicity when treated with irinotecan.
+638,108,adverse-reaction,adverse,The presence of this genotype in UGT1A1 may indicate an increased risk of bone marrow toxicity when treated with irinotecan.
+638,109,adverse-reaction,adverse,The presence of this genotype in UGT1A1 may indicate an increased risk of bone marrow toxicity when treated with irinotecan.
+638,110,adverse-reaction,adverse,Patients who carry this genotype in UGT1A1 are at increased risk for neutropenia following initiation of irinotecan treatment.
+652,26,adverse-reaction,adverse,Patients who carry this allele may be at an increased risk of Stevens-Johnson Syndrome and toxic epidermal necrolysis when treated with oxcarbazepine.
+684,2,snp-effect,efficacy,Patients with this genotype in IFNL3 have a reduced likelihood of achieving sustained virologic response to ribavirin therapy.
+715,111,snp-effect,efficacy,Patients with this genotype are have a decreased likelihood of responding to donepezil when treating Alzheimer's disease.
+736,112,snp-effect,efficacy,Patients with this genotype in CYP3A5 are extensive metabolizers and require higer doses of tacrolimus to attain the therapeutic effect.
+736,113,adverse-reaction,adverse,The presence of this genotype in ABCB1 may indicate an increased risk of drug-induced neurotoxicity when treated with tacrolimus.
+774,114,snp-effect,adverse,Patients with this genotype in CYP2D6 are ultrarapid metabolizers with an increased risk of poor therapeutic response and vomiting when treated with ondansteron.
+774,114,snp-effect,adverse,Patients with this genotype in CYP2D6 are ultrarapid metabolizers with an increased risk of poor therapeutic response and vomiting when treated with ondansteron.
+788,24,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to almotriptan when treating cluster headache.
+814,25,snp-effect,efficacy,Patients with this genotype have reduced metabolism of acetylsalicylic acid.
+814,115,snp-effect,efficacy,Patients with this genotype have increased resistance to the anti-thrombotic effects of aspirin.
+814,116,adverse-reaction,adverse,The presence of this genotype in LTC4S may indicate an increased risk of chronic urticaria when treated with acetylsalicylic acid.
+815,93,adverse-reaction,adverse,The presence of this polymorphism in CYP2C9 is associated with reduction in phenprocoumon metabolism.
+815,25,adverse-reaction,adverse,The presence of this polymorphism in CYP2C9 is associated with reduction in phenprocoumon metabolism.
+815,117,adverse-reaction,adverse,The presence of this polymorphism in VKORC1 is associated with reduction in phenprocoumon metabolism.
+820,118,adverse-reaction,adverse,The presence of this genotype in CYP2E1 may be associated with an increased risk of drug-induced hepatotoxicity from isoniazid treatment.
+821,24,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to naratriptan when treating (condition: cluster headache).
+822,24,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to rizatriptan when treating (condition: cluster headache).
+861,53,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of azathioprine resulting in increased toxicity.
+861,54,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of azathioprine resulting in increased toxicity.
+861,53,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of azathioprine resulting in increased toxicity.
+864,100,adverse-reaction,adverse,Pediatric patients who carry this genotype may be at a higher risk of experiencing anthracycline-induced cardiotoxicity when treated with doxorubicin.
+864,101,adverse-reaction,adverse,Pediatric patients who carry this genotype may be at a higher risk of experiencing anthracycline-induced cardiotoxicity when treated with doxorubicin.
+864,102,adverse-reaction,adverse,Pediatric patients who carry this genotype may be at a higher risk of experiencing anthracycline-induced cardiotoxicity when treated with doxorubicin.
+865,24,snp-effect,efficacy,Patients with this genotype have an increased likelihood of responding to frovatriptan when treating (condition: cluster headache).
+899,53,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of mercaptopurine resulting in increased toxicity.
+899,54,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of mercaptopurine resulting in increased toxicity.
+899,53,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of mercaptopurine resulting in increased toxicity.
+913,58,adverse-reaction,adverse,Patients who carry this SNP are at a higher risk of experiencing a hypersensitivity reaction to abacavir.
+930,25,snp-effect,efficacy,Patients with this genotype have reduced metabolism of glipizide.
+935,119,adverse-reaction,adverse,The presence of this genotype in UGT1A1 may indicate an increased risk of hyperbilirubinemia from atazanavir treatment.
+935,119,adverse-reaction,adverse,The presence of this genotype in UGT1A1 may indicate an increased risk of hyperbilirubinemia from atazanavir treatment.
+935,120,adverse-reaction,adverse,The presence of this genotype in UGT1A1 may indicate an increased risk of hyperbilirubinemia from atazanavir treatment.
+939,6,snp-effect,adverse,Patients with this genotype have a greater reduction in risk of a major cardiovascular event with high dose atorvastatin.
+939,7,snp-effect,efficacy,Patients with this genotype have a lesser reduction in LDL cholesterol with atorvastatin.
+939,121,snp-effect,efficacy,Patients with this genotype have an greater reduction in LDL cholesterol with atorvastatin.
+960,15,adverse-reaction,adverse,The presence of this genotype in CYP1A2 may be associated with an increased risk of drug-related toxicity from leflunomide therapy.
+961,6,snp-effect,adverse,Patients with this genotype have a greater reduction in risk of a major cardiovascular event with high dose rosuvastatin.
+961,7,snp-effect,efficacy,Patients with this genotype have a lesser reduction in LDL cholesterol with rosuvastatin.
+961,122,snp-effect,efficacy,Patients with this genotype have a greater reduction in LDL cholesterol with rosuvastatin.
+964,74,adverse-reaction,adverse,The presence of this genotype in DPYD is associated with an increased risk of drug-related toxicity from capecitabine therapy.
+964,75,adverse-reaction,adverse,The presence of this genotype in DPYD is associated with an increased risk of drug-related toxicity from capecitabine therapy.
+964,73,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from capecitabine therapy.
+964,74,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from capecitabine therapy.
+964,76,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from capecitabine therapy.
+964,74,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from capecitabine therapy.
+964,77,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from capecitabine therapy.
+967,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with poor metabolism of sertraline.
+967,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of sertraline.
+968,123,snp-effect,efficacy,Patients with this genotype will lose weight with sibutramine.
+980,124,adverse-reaction,adverse,The presence of polymorphisms in KCNH2 and KCNE2 may potentially be associated with increased susceptibility to long Q-T syndrome or cardiac arrhytmia when treated with amiodarone.
+982,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduction in gliclazide metabolism.
+982,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduction in gliclazide metabolism.
+986,25,snp-effect,efficacy,Patients with this genotype have reduced metabolism of tolbutamide.
+993,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of proguanil.
+993,50,snp-effect,efficacy,Patients with this genotype have reduced metabolism of proguanil.
+998,125,snp-effect,efficacy,Patients with this genotype in ADRB1 have an increased likelihood of responding to carvedilol for the treatment of increased blood pressure.
+1004,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of doxepin.
+1004,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of doxepin.
+1004,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of doxepin.
+1004,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of doxepin.
+1004,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with poor metabolism of doxepin.
+1004,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of doxepin.
+1004,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of doxepin.
+1004,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of doxepin.
+1013,30,snp-effect,efficacy,Patients with this genotype have reduced metabolism of desipramine.
+1013,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of desipramine.
+1013,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of desipramine.
+1013,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of desipramine.
+1013,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of desipramine.
+1013,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of desipramine.
+1013,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of desipramine.
+1018,126,snp-effect,efficacy,The presence of this genotype in DRD2 is associated with improved therapeutic response to bupropion.
+1037,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with poor metabolism of escitalopram.
+1037,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of escitalopram.
+1037,127,adverse-reaction,adverse,The presence of this polymorphism in SLC6A4 may potentially be associated with increased risk of adverse events from escitalopram.
+1084,128,snp-effect,efficacy,The presence of this polymorphism in TBX21 may be associated with improved responsiveness to budenoside for the treatment of asthma.
+1094,129,snp-effect,efficacy,The presence of this polymorphism in KCNH2 may be associated with increased clinical efficacy with metoclopramide.
+1094,130,snp-effect,efficacy,The presence of this polymorphism in ADRA1D may be associated with increased clinical efficacy with metoclopramide.
+1094,131,snp-effect,efficacy,Patients with this genotype have reduced metabolism of metoclopramide.
+1094,38,snp-effect,efficacy,Patients with this polymorphism in ABCB1 may have a reduced response to clomipramine.
+1094,111,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of metoclopramide and may be at a higher risk of experiencing adverse events.
+1094,131,adverse-reaction,adverse,Patients with this genotype have reduced metabolism of metoclopramide and may be at a higher risk of experiencing adverse events.
+1094,132,adverse-reaction,adverse,The presence of this polymorphism in KCNH2 is associated with higher incidences of adverse events from metoclopramide treatment.
+1103,30,snp-effect,efficacy,Patients with this genotype have reduced metabolism of clomipramine.
+1103,8,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of clomipramine.
+1103,9,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of clomipramine.
+1103,10,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of clomipramine.
+1103,11,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of clomipramine.
+1103,47,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with poor metabolism of clomipramine.
+1103,48,snp-effect,efficacy,The presence of this polymorphism in CYP2C19 is associated with reduced or poor metabolism of clomipramine.
+1103,12,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of clomipramine.
+1103,13,snp-effect,efficacy,The presence of this polymorphism in CYP2D6 is associated with reduced or poor metabolism of clomipramine.
+1109,133,adverse-reaction,adverse,Patients with this polymorphism in ABCC2 are at a higher risk of experiencing drug-induced leukopenia and drug-induced neutropenia when treated with docetaxel.
+1118,134,adverse-reaction,adverse,The presence of this polymorphism in TNXB may indicate an increased risk of drug-induced ALT-elevations leading to hepatotoxicity when treated with lapatinib.
+1118,135,adverse-reaction,adverse,The presence of this polymorphism in TNXB may indicate an increased risk of drug-induced ALT-elevations leading to hepatotoxicity when treated with lapatinib.
+1118,136,adverse-reaction,adverse,The presence of this polymorphism in TNXB may indicate an increased risk of drug-induced ALT-elevations leading to hepatotoxicity when treated with lapatinib.
+1118,137,adverse-reaction,adverse,The presence of this polymorphism in TNXB may indicate an increased risk of drug-induced ALT-elevations leading to hepatotoxicity when treated with lapatinib.
+1126,138,adverse-reaction,adverse,Patients with metastatic renal cell carcinoma who carry this polymorphism in CYP3A4 are at a higher risk of experiencing drug-induced hypertension when treated with sunitinib.
+1217,93,snp-effect,efficacy,The presence of this polymorphism in CYP2C9 is associated with reduction in acenocoumarol metabolism.
+1217,25,snp-effect,efficacy,The presence of this polymorphism in CYP2C9 is associated with reduction in acenocoumarol metabolism.
+1217,93,snp-effect,adverse,Patients with this polymorphism in CYP2C9 may be at a higher risk of developing drug-related hemorrhage or thrombosis when treated with acenocoumarol.
+1217,25,snp-effect,adverse,Patients with this polymorphism in CYP2C9 may be at a higher risk of developing drug-related hemorrhage or thrombosis when treated with acenocoumarol.
+1217,117,adverse-reaction,adverse,The presence of this single nucleotide polymorphism in VKORC1 is associated with reduction in acenocoumarol metabolism and increased risk of drug-related hemorrhage.
+1365,139,adverse-reaction,adverse,The prescence of this polymorphism in PICK1 is associated with increased susceptibility to drug-related psychosis and addiction when using methamphetamine.
+4435,107,adverse-reaction,adverse,Patients who carry this polymorphism in UGT1A1 are at a higer risk of developing hyperbilirubinemia when treated with nilotinib.
+4507,110,adverse-reaction,adverse,Patients who carry this genotype in UGT1A1 are at greater risk of experiencing dose-limiting toxicity from belinostat therapy.
+4507,140,adverse-reaction,adverse,Patients who carry this genotype in UGT1A1 may be at greater risk of experiencing dose-limiting toxicity from belinostat therapy.
+4842,92,adverse-reaction,adverse,Patients who carry this polymorphism in F5 are associated with an increased risk of thromboembolism when treated with eltrombopag.
+4842,141,adverse-reaction,adverse,Patients who carry this polymorphism in SERPINC1 are associated with antithrombin III deficiency and an increased risk of thromboembolism when treated with eltrombopag.
+5022,119,adverse-reaction,adverse,The presence of this polymorphism in UGT1A1 is associated with an increase in the incidence of hyperbilirubinemia when treated with pazopanib.
+5022,58,adverse-reaction,adverse,The presence of this polymorphism in HCP5 may indicate an increased risk of ALT elevation  leading to drug-related hepatotoxicty from pazpanib therapy.
+7108,142,snp-effect,efficacy,Patients who carry this polymorphism in CFTR will respond to ivacaftor therapy.
+7177,44,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to afatinib.
+7177,42,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to afatinib.
+7177,43,snp-effect,efficacy,The presence of this polymorphism in EGFR is associated with a higher response rate to afatinib.
+7180,49,snp-effect,efficacy,The presence of this polymorphism in HTR1A may indicate a higher level of efficacy in improving negative symptoms of schizophrenia when treated with perospirone.
+7186,107,snp-effect,efficacy,Poor drug metabolizer.
+7186,143,snp-effect,efficacy,The presence of this polymorphism in UGT1A1 is associated with reduction in dolutegravir metabolism.
+7186,119,snp-effect,efficacy,The presence of this polymorphism in UGT1A1 is associated with reduction in dolutegravir metabolism.
+7463,74,adverse-reaction,adverse,The presence of this genotype in DPYD is associated with an increased risk of drug-related toxicity from tegafur therapy.
+7463,75,adverse-reaction,adverse,The presence of this genotype in DPYD is associated with an increased risk of drug-related toxicity from tegafur therapy.
+7463,73,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from tegafur therapy.
+7463,74,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from tegafur therapy.
+7463,76,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from tegafur therapy.
+7463,74,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from tegafur therapy.
+7463,77,adverse-reaction,adverse,The presence of this genotype in DPYD may be associated with an increased risk of drug-related toxicity from tegafur therapy.

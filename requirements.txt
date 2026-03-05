@@ -1,0 +1,22 @@
+# Core Data Science
+pandas
+numpy
+scikit-learn
+tqdm
+matplotlib
+
+# Deep Learning
+torch
+torchvision
+torchaudio
+
+# Graph Neural Networks
+torch-geometric
+
+# Pretrained Embeddings (ChemBERTa, ProtBERT)
+transformers
+
+# API Backend
+fastapi
+uvicorn
+pydantic

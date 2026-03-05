@@ -1,0 +1,43 @@
+# ── Python ──────────────────────────────────────
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Raw Data (too large for GitHub) ─────────────
+# DrugBank raw XML & CSVs (~2.3GB total)
+drugbank_all_full_database.xml/
+
+# SIDER raw data
+meddra_all_se.tsv.gz
+drug_names.tsv
+
+# Large processed files (>100MB)
+data/processed/graph_data.pt
+data/processed/edges_ddi.csv
+
+# ── Model Weights ───────────────────────────────
+# These should be downloaded from releases or regenerated
+# Uncomment below if you want to EXCLUDE model weights from git:
+# models/best_hgt_model.pt
+
+# ── IDE & OS ────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Misc ────────────────────────────────────────
+*.log
+.env
+.gemini/

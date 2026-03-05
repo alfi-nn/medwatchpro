@@ -1,0 +1,101 @@
+side_effect,node_idx
+nausea,0
+headache,1
+dermatitis,2
+rash,3
+vomiting,4
+dizziness,5
+diarrhoea,6
+pruritus,7
+asthenia,8
+hypersensitivity,9
+abdominal pain,10
+urticaria,11
+gastrointestinal pain,12
+body temperature increased,13
+feeling abnormal,14
+pain,15
+fatigue,16
+gastrointestinal disorder,17
+constipation,18
+dyspepsia,19
+decreased appetite,20
+somnolence,21
+dyspnoea,22
+insomnia,23
+musculoskeletal discomfort,24
+paraesthesia,25
+hypotension,26
+skin disorder,27
+thrombocytopenia,28
+hyperhidrosis,29
+anorexia,30
+anaphylactic shock,31
+nervous system disorder,32
+shock,33
+tachycardia,34
+infection,35
+cough,36
+dry mouth,37
+arthralgia,38
+myalgia,39
+discomfort,40
+oedema,41
+unspecified disorder of skin and subcutaneous tissue,42
+hypertension,43
+anxiety,44
+chest pain,45
+confusional state,46
+angioedema,47
+loss of consciousness,48
+leukopenia,49
+palpitations,50
+malaise,51
+vertigo,52
+syncope,53
+convulsion,54
+ill-defined disorder,55
+anaemia,56
+agitation,57
+back pain,58
+muscle spasms,59
+tremor,60
+vision blurred,61
+dysgeusia,62
+erythema,63
+mental disorder,64
+flatulence,65
+mediastinal disorder,66
+alopecia,67
+malnutrition,68
+angiopathy,69
+nervousness,70
+chills,71
+tension,72
+immune system disorder,73
+cardiac disorder,74
+flushing,75
+arrhythmia,76
+tinnitus,77
+eye disorder,78
+erythema multiforme,79
+oedema peripheral,80
+hepatitis,81
+connective tissue disorder,82
+visual impairment,83
+urethral disorder,84
+urinary tract disorder,85
+rhinitis,86
+pharyngitis,87
+hypoaesthesia,88
+bradycardia,89
+haemorrhage,90
+hallucination,91
+haemoglobin,92
+epistaxis,93
+sinusitis,94
+hepatobiliary disease,95
+jaundice,96
+agranulocytosis,97
+stevens-johnson syndrome,98
+stomatitis,99
