@@ -311,6 +311,124 @@
             margin-top: 0.4rem;
         }
 
+        /* ── XAI & Buttons ───────────────────────── */
+        .simulate-btn {
+            background: rgba(96, 165, 250, 0.1);
+            color: var(--accent-blue);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 4px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: max(0.5rem, auto);
+        }
+
+        .simulate-btn:hover {
+            background: rgba(96, 165, 250, 0.2);
+            border-color: var(--accent-blue);
+        }
+
+        /* ── Counterfactual Modal ───────────────── */
+        .cf-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cf-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .cf-modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        .cf-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .cf-close:hover {
+            color: var(--text-color);
+        }
+
+        .cf-result-item {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cf-result-item.causal {
+            border-left: 3px solid var(--accent-green);
+            background: rgba(52, 211, 153, 0.05);
+        }
+
+        .cf-metric {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .cf-metric-val {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .cf-metric-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .cf-arrow {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .cf-impact {
+            font-weight: 700;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        .cf-impact.significant {
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+        }
+
+        .cf-impact.minor {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
         /* ── Sections ───────────────────────────────── */
         .section-title {
             font-size: 1.15rem;
@@ -1054,6 +1172,24 @@
                 <div class="explanation-list" id="expList"></div>
             </div>
         </div>
+
+        <!-- Counterfactual Modal -->
+        <div class="cf-modal" id="cfModal">
+            <div class="cf-modal-content">
+                <span class="cf-close" onclick="closeCfModal()">&times;</span>
+                <div class="section-title">
+                    <span class="icon">&#128300;</span> Counterfactual Simulation
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;" id="cfModalDesc"></p>
+
+                <div id="cfLoading" style="display:none; text-align:center; padding: 2rem;">
+                    <div class="spinner" style="width: 24px; height: 24px; margin: 0 auto 1rem;"></div>
+                    <p>Simulating alternative graph topology...</p>
+                </div>
+
+                <div id="cfResultsList"></div>
+            </div>
+        </div>
     </main>
 
     <script>
@@ -1237,6 +1373,7 @@
                             <div class="exp-bar" style="width:${Math.min(exp.attention * 100, 100)}%"></div>
                         </div>
                         <span class="exp-score">${(exp.attention * 100).toFixed(0)}%</span>
+                        ${exp.type === 'protein' ? `<button class="simulate-btn" onclick="simulateCounterfactual('${data.drug.name.replace(/'/g, "\\'")}', ${exp.node_idx}, '${exp.name.replace(/'/g, "\\'")}')">Simulate Removal</button>` : ''}
                     </div>
                 `).join('');
             } else {
@@ -1422,6 +1559,78 @@
                 </div>
                 ${comboBioHtml}
             `;
+        }
+
+        // ── Counterfactual Simulation ────────────────
+        function closeCfModal() {
+            document.getElementById('cfModal').classList.remove('active');
+        }
+
+        async function simulateCounterfactual(drugName, proteinIdx, proteinName) {
+            const modal = document.getElementById('cfModal');
+            const desc = document.getElementById('cfModalDesc');
+            const loading = document.getElementById('cfLoading');
+            const resultsList = document.getElementById('cfResultsList');
+
+            modal.classList.add('active');
+            desc.innerHTML = `Analyzing causal impact: <strong>"If ${drugName} did NOT target ${proteinName}, how would the side-effect risks change?"</strong>`;
+            loading.style.display = 'block';
+            resultsList.innerHTML = '';
+
+            try {
+                const res = await fetch(`${API}/api/counterfactual`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ drug_name: drugName, protein_idx: proteinIdx })
+                });
+
+                if (!res.ok) throw new Error("Simulation failed");
+                const data = await res.json();
+                loading.style.display = 'none';
+
+                if (!data.impact_found || data.results.length === 0) {
+                    resultsList.innerHTML = '<div class="empty-state">No significant causal impact found for this edge deletion.</div>';
+                    return;
+                }
+
+                let html = '<h4 style="margin-bottom: 1rem; color: var(--text-color);">Causal Impact on Side Effects (Absolute Drop)</h4>';
+
+                data.results.forEach(r => {
+                    const isSignificant = r.causal_impact >= 0.05;
+                    const impactClass = isSignificant ? 'significant' : 'minor';
+                    const itemClass = isSignificant ? 'causal' : '';
+                    const impactStr = r.causal_impact > 0 ? `-${(r.causal_impact * 100).toFixed(1)}%` : `+${Math.abs(r.causal_impact * 100).toFixed(1)}%`;
+
+                    html += `
+                        <div class="cf-result-item ${itemClass}">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 0.95rem;">${r.name}</div>
+                                ${isSignificant ? '<div style="font-size: 0.7rem; color: #34d399; margin-top: 0.2rem;">★ Causal connection identified</div>' : ''}
+                            </div>
+                            
+                            <div style="display:flex; align-items:center; gap: 1rem;">
+                                <div class="cf-metric">
+                                    <span class="cf-metric-val">${(r.baseline_prob * 100).toFixed(1)}%</span>
+                                    <span class="cf-metric-label">Baseline</span>
+                                </div>
+                                <span class="cf-arrow">→</span>
+                                <div class="cf-metric">
+                                    <span class="cf-metric-val">${(r.counterfactual_prob * 100).toFixed(1)}%</span>
+                                    <span class="cf-metric-label">Simulated</span>
+                                </div>
+                                <div class="cf-impact ${impactClass}">
+                                    ${impactStr}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                resultsList.innerHTML = html;
+
+            } catch (e) {
+                loading.style.display = 'none';
+                resultsList.innerHTML = `<div class="empty-state" style="color:var(--accent-red)">Error running simulation: ${e.message}</div>`;
+            }
         }
 
         // ── Init ────────────────────────────────────

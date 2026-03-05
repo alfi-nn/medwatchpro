@@ -243,6 +243,7 @@ def get_explanations(node_idx, attn_weights, attn_index, edge_index_dict, top_k=
             "type": "protein",
             "name": pname,
             "id": uniprot,
+            "node_idx": int(p_idx),
             "attention": round(0.5 + np.random.random() * 0.5, 4),  # placeholder scaled
         })
 
@@ -260,6 +261,7 @@ def get_explanations(node_idx, attn_weights, attn_index, edge_index_dict, top_k=
             "type": "drug",
             "name": dname,
             "id": did,
+            "node_idx": int(d_idx),
             "attention": round(0.3 + np.random.random() * 0.4, 4),
         })
 
@@ -294,6 +296,12 @@ class PredictionRequest(BaseModel):
     drug_name: str
     top_k: Optional[int] = 20
     threshold: Optional[float] = 0.3
+
+
+class CounterfactualRequest(BaseModel):
+    drug_name: str
+    protein_idx: int
+    top_k: Optional[int] = 10
 
 
 class DrugSearchRequest(BaseModel):
@@ -674,6 +682,86 @@ async def predict_combination(req: CombinationRequest):
             "test_auc": results.get("test_auc", 0),
             "note": "Polypharmacy prediction via max+mean embedding aggregation"
         }
+    }
+
+
+@app.post("/api/counterfactual")
+async def counterfactual(req: CounterfactualRequest):
+    drug_key = req.drug_name.lower().strip()
+    node_idx = drug_name_to_idx.get(drug_key)
+    
+    if node_idx is None:
+        raise HTTPException(status_code=404, detail="Drug not found")
+        
+    targets_et = ("drug", "targets", "protein")
+    if targets_et not in eid:
+        raise HTTPException(status_code=400, detail="Graph missing target edges")
+
+    orig_edge_index = eid[targets_et].clone()
+    mask = ~((orig_edge_index[0] == node_idx) & (orig_edge_index[1] == req.protein_idx))
+    
+    if mask.all():
+        return {"impact_found": False, "message": "Edge not found in graph."}
+
+    # 1. Baseline prediction (using pre-computed embeddings)
+    with torch.no_grad():
+        drug_emb_base = drug_embeddings[node_idx].unsqueeze(0)
+        se_logits_base = model.predict_side_effects(drug_emb_base)
+        se_probs_base = torch.sigmoid(se_logits_base).squeeze().numpy()
+
+    # 2. Mask edges
+    masked_edge_index = orig_edge_index[:, mask]
+    eid[targets_et] = masked_edge_index
+    
+    # Handle reverse edges as well
+    rev_et = ("protein", "targeted_by", "drug")
+    orig_rev_edge_index = None
+    if rev_et in eid:
+        orig_rev_edge_index = eid[rev_et].clone()
+        rev_mask = ~((orig_rev_edge_index[0] == req.protein_idx) & (orig_rev_edge_index[1] == node_idx))
+        eid[rev_et] = orig_rev_edge_index[:, rev_mask]
+
+    # 3. Counterfactual Forward Pass
+    try:
+        with torch.no_grad():
+            out_cf = model(x_dict, eid)
+            drug_emb_cf = out_cf["drug"][node_idx].unsqueeze(0)
+            se_logits_cf = model.predict_side_effects(drug_emb_cf)
+            se_probs_cf = torch.sigmoid(se_logits_cf).squeeze().numpy()
+    finally:
+        # 4. Restore original graph
+        eid[targets_et] = orig_edge_index
+        if orig_rev_edge_index is not None:
+            eid[rev_et] = orig_rev_edge_index
+
+    # 5. Calculate Impact
+    results_out = []
+    top_indices = np.argsort(se_probs_base)[::-1][:req.top_k]
+    
+    for idx in top_indices:
+        base_p = float(se_probs_base[idx])
+        cf_p = float(se_probs_cf[idx])
+        impact = base_p - cf_p
+        
+        # We only care about reporting moderate to high baseline risks, 
+        # or anything with a significant impact
+        if base_p > 0.2 or abs(impact) > 0.02:
+            results_out.append({
+                "name": se_names[idx],
+                "baseline_prob": round(base_p, 4),
+                "counterfactual_prob": round(cf_p, 4),
+                "causal_impact": round(impact, 4),
+                "is_causal": impact > 0.05 # 5% absolute drop signifies causality
+            })
+            
+    # Sort by impact descending
+    results_out.sort(key=lambda x: x["causal_impact"], reverse=True)
+
+    return {
+        "drug_name": req.drug_name,
+        "protein_idx": req.protein_idx,
+        "impact_found": True,
+        "results": results_out
     }
 
 
