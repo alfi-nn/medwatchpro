@@ -11,6 +11,7 @@
 1. **Side-Effect Prediction**: Predict the probability of 100 high-impact adverse events for any given drug compound.
 2. **Biomarker Classification**: Determine whether a specific genetic variant (biomarker) leads to an *adverse* reaction or an *efficacy* response when exposed to a specific drug.
 3. **Novel Compound Analysis**: Enable real-time prediction for completely new, out-of-database molecules using only their SMILES strings.
+4. **Temporal Onset Prediction**: Predict *when* side effects are likely to occur (acute to chronic) using real-world FDA FAERS data integration.
 
 ---
 
@@ -40,6 +41,7 @@ A PyTorch Geometric **Heterogeneous Graph Transformer (HGT)** was implemented wi
 - **Dual-Task Decoder**:
   1. A Multi-Layer Perceptron (MLP) mapping the final 128-dim drug embeddings to 100 independent sigmoid outputs (Multi-label classification of Side-Effects).
   2. A secondary MLP taking the concatenated embeddings of a (Drug, Biomarker) pair to predict a 3-class categorical output (Adverse, Efficacy, Other).
+- **Temporal Mapping**: Real-world FDA FAERS data (1.14M records) mapped to predicted side-effects to provide median onset times and risk categories (e.g., Acute <24h).
 
 ---
 

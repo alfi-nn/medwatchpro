@@ -16,7 +16,11 @@ drugbank_all_full_database.xml/
 
 # SIDER raw data
 meddra_all_se.tsv.gz
+meddra_freq.tsv.gz
 drug_names.tsv
+
+# FAERS Temporal raw data
+temp-FAERS/
 
 # Large processed files (>100MB)
 data/processed/graph_data.pt

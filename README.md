@@ -60,7 +60,8 @@ The system constructs a large-scale biomedical knowledge graph from DrugBank and
 | 💊 **Polypharmacy Safety** | Analyze 2-3 drug combinations with synergy scoring & DDI warnings |
 | 🧠 **Explainable AI (XAI)** | HGT attention weights reveal which proteins/drugs drive predictions |
 | 🧪 **Novel Compound Analysis** | Predict side effects for new drugs using SMILES strings (via ChemBERTa) |
-| 🌐 **Interactive Dashboard** | Dark-themed web UI with real-time search, risk bars, and explanation cards |
+| ⏱️ **Temporal Onset Prediction** | Predict *when* side effects appear (acute, early, delayed, late, chronic) using real-world FDA FAERS data |
+| 🌐 **Interactive Dashboard** | Dark-themed web UI with real-time search, risk bars, temporal badges, and explanation cards |
 
 ---
 
@@ -119,6 +120,7 @@ The system constructs a large-scale biomedical knowledge graph from DrugBank and
 |--------|-------------|------|
 | **[DrugBank](https://go.drugbank.com/)** | Comprehensive drug database with targets, interactions, biomarkers | ~1.9 GB XML |
 | **[SIDER](http://sideeffects.embl.de/)** | Side effects of marketed medicines (MedDRA coded) | ~2.3 MB |
+| **[FAERS](https://github.com/kimkimjh/temp-FAERS)** | FDA Adverse Event Reporting System (2012-2021) for temporal onset mapping | ~2 GB CSVs |
 
 ### Required DrugBank Files
 
@@ -477,6 +479,8 @@ MedWatchPro/
 
 5. **Zero-Shot Novel Compound Prediction**: ChemBERTa generates embeddings for unseen SMILES strings, which are dynamically integrated into the HGT graph for inference.
 
+6. **Real-World Temporal Mapping**: Processed 1.14M FDA FAERS adverse event reports to calculate median time-to-onset for drug-reaction pairs, providing clinical context (e.g., "within 24 hours" vs "1-6 months") alongside static risk probabilities.
+
 ---
 
 ## Limitations & Future Work
@@ -490,7 +494,6 @@ MedWatchPro/
 
 ### Planned Improvements
 
-- **Temporal ADR Prediction**: Predict *when* side effects appear using FDA FAERS onset data
 - **Counterfactual Explanations**: Edge-masking to show causal reasoning ("if drug X didn't target Y...")
 - **Patient-Specific Risk**: Incorporate demographics for personalized predictions
 - **Severity Classification**: Predict mild/moderate/severe/life-threatening risk levels

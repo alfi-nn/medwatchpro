@@ -166,6 +166,24 @@ with torch.no_grad():
 # Side-effect names
 se_names = se_df["side_effect"].tolist()
 
+# Temporal ADR labels (from FAERS)
+temporal_labels = {}
+temporal_path = os.path.join(DATA_DIR, "temporal_labels.json")
+if os.path.exists(temporal_path):
+    import json as _json
+    with open(temporal_path) as f:
+        _raw = _json.load(f)
+    temporal_labels = {int(k): v for k, v in _raw.items()}
+    print(f"Loaded temporal labels for {len(temporal_labels)} side effects")
+
+ONSET_LABELS = {
+    "acute": "Within 24 hours",
+    "early": "1-7 days",
+    "delayed": "1-4 weeks",
+    "late": "1-6 months",
+    "chronic": "6+ months",
+}
+
 # Biomarker info
 bio_info = []
 for _, row in biomarkers_df.iterrows():
@@ -367,10 +385,14 @@ async def predict(req: PredictionRequest):
         for idx in top_indices:
             prob = float(se_probs[idx])
             if prob >= req.threshold:
+                t_info = temporal_labels.get(int(idx), {})
                 side_effects.append({
                     "name": se_names[idx],
                     "probability": round(prob, 4),
-                    "risk_level": "high" if prob > 0.7 else "medium" if prob > 0.4 else "low"
+                    "risk_level": "high" if prob > 0.7 else "medium" if prob > 0.4 else "low",
+                    "onset_category": t_info.get("category", "unknown"),
+                    "median_onset_days": t_info.get("median_days", None),
+                    "onset_label": ONSET_LABELS.get(t_info.get("category", ""), "Unknown"),
                 })
 
         # Biomarker predictions (find connected biomarkers)
@@ -461,10 +483,14 @@ async def predict_smiles(req: SmilesPredictionRequest):
             for idx in top_indices:
                 prob = float(se_probs[idx])
                 if prob >= req.threshold:
+                    t_info = temporal_labels.get(int(idx), {})
                     side_effects.append({
                         "name": se_names[idx],
                         "probability": round(prob, 4),
-                        "risk_level": "high" if prob > 0.7 else "medium" if prob > 0.4 else "low"
+                        "risk_level": "high" if prob > 0.7 else "medium" if prob > 0.4 else "low",
+                        "onset_category": t_info.get("category", "unknown"),
+                        "median_onset_days": t_info.get("median_days", None),
+                        "onset_label": ONSET_LABELS.get(t_info.get("category", ""), "Unknown"),
                     })
 
             # 4. Biomarker Predictions
@@ -598,6 +624,7 @@ async def predict_combination(req: CombinationRequest):
             prob = float(combined_probs[idx])
             if prob >= req.threshold:
                 syn_score = float(synergy[idx])
+                t_info = temporal_labels.get(int(idx), {})
                 individual_scores = {resolved[i]["name"]: round(float(individual_probs[i][idx]), 4)
                                      for i in range(len(resolved))}
                 se_entry = {
@@ -607,6 +634,9 @@ async def predict_combination(req: CombinationRequest):
                     "synergy_score": round(syn_score, 4),
                     "interaction_amplified": syn_score > 0.05,
                     "individual_scores": individual_scores,
+                    "onset_category": t_info.get("category", "unknown"),
+                    "median_onset_days": t_info.get("median_days", None),
+                    "onset_label": ONSET_LABELS.get(t_info.get("category", ""), "Unknown"),
                 }
                 side_effects.append(se_entry)
 

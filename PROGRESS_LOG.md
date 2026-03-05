@@ -131,6 +131,24 @@ class HGTConvWithAttn(HGTConv):
 - Summary: drugs combined, interaction-amplified count, known DDI pairs
 
 ---
+#### Phase 8: Temporal ADR Prediction [COMPLETED]
+
+**Problem**: Existing ADR prediction is static — predicts *what* but not *when* side effects appear.
+
+**Solution**: Processed 1.14M FDA FAERS adverse event reports (2012-2021) to compute real-world time-to-onset:
+1. Joined `df_summarized.csv.gz` (drug start dates) with `df_REAC.csv.gz` (side effect names)
+2. Computed onset_days = event_date - start_date for 1.14M reports
+3. Categorized into 5 temporal bins: **Acute** (0-24h, 48%), **Early** (1-7d, 15%), **Delayed** (1-4w, 15%), **Late** (1-6mo, 17%), **Chronic** (6+mo, 5%)
+4. Mapped to 97/100 of our SIDER side effects
+
+**Dataset**: [temp-FAERS](https://github.com/kimkimjh/temp-FAERS) — preprocessed FDA FAERS 2012-2021
+
+**Changes**:
+- `scripts/06_temporal_adr.py`: FAERS processing pipeline → `temporal_labels.json` & `temporal_categories.npy`
+- `server.py`: Loads temporal labels, includes `onset_category`, `median_onset_days`, `onset_label` in all endpoints
+- `frontend/index.html`: Color-coded onset badges (red=acute, orange=early, yellow=delayed, blue=late, purple=chronic)
+
+---
 
 ## All Phases Complete ✅
 
@@ -143,6 +161,7 @@ class HGTConvWithAttn(HGTConv):
 | 5 | API & Frontend | ✅ COMPLETED |
 | 6 | Explainable AI (XAI) | ✅ COMPLETED |
 | 7 | Polypharmacy Safety | ✅ COMPLETED |
+| 8 | Temporal ADR Prediction | ✅ COMPLETED |
 
 ---
 

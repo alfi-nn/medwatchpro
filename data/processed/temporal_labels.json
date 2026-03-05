@@ -1,0 +1,802 @@
+{
+  "10": {
+    "name": "abdominal pain",
+    "median_days": 4.0,
+    "mean_days": 33.8,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 19166
+  },
+  "57": {
+    "name": "agitation",
+    "median_days": 1.0,
+    "mean_days": 20.0,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 6136
+  },
+  "97": {
+    "name": "agranulocytosis",
+    "median_days": 13.0,
+    "mean_days": 32.5,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 2327
+  },
+  "67": {
+    "name": "alopecia",
+    "median_days": 29.0,
+    "mean_days": 74.7,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 9712
+  },
+  "56": {
+    "name": "anaemia",
+    "median_days": 24.0,
+    "mean_days": 59.1,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 13164
+  },
+  "31": {
+    "name": "anaphylactic shock",
+    "median_days": 0.0,
+    "mean_days": 7.7,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 3483
+  },
+  "47": {
+    "name": "angioedema",
+    "median_days": 3.0,
+    "mean_days": 40.6,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 5661
+  },
+  "69": {
+    "name": "angiopathy",
+    "median_days": 21.5,
+    "mean_days": 77.5,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 102
+  },
+  "44": {
+    "name": "anxiety",
+    "median_days": 2.0,
+    "mean_days": 29.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 16506
+  },
+  "76": {
+    "name": "arrhythmia",
+    "median_days": 4.0,
+    "mean_days": 36.8,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 2254
+  },
+  "38": {
+    "name": "arthralgia",
+    "median_days": 4.0,
+    "mean_days": 36.8,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 22316
+  },
+  "8": {
+    "name": "asthenia",
+    "median_days": 5.0,
+    "mean_days": 37.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 25482
+  },
+  "58": {
+    "name": "back pain",
+    "median_days": 2.0,
+    "mean_days": 32.1,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 15719
+  },
+  "13": {
+    "name": "body temperature increased",
+    "median_days": 1.0,
+    "mean_days": 23.8,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 1730
+  },
+  "89": {
+    "name": "bradycardia",
+    "median_days": 0.0,
+    "mean_days": 28.1,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 4793
+  },
+  "74": {
+    "name": "cardiac disorder",
+    "median_days": 26.0,
+    "mean_days": 75.3,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 1742
+  },
+  "45": {
+    "name": "chest pain",
+    "median_days": 3.0,
+    "mean_days": 37.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 13791
+  },
+  "71": {
+    "name": "chills",
+    "median_days": 0.0,
+    "mean_days": 20.3,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 13344
+  },
+  "46": {
+    "name": "confusional state",
+    "median_days": 3.0,
+    "mean_days": 30.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 13786
+  },
+  "82": {
+    "name": "connective tissue disorder",
+    "median_days": 4.0,
+    "mean_days": 56.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 51
+  },
+  "18": {
+    "name": "constipation",
+    "median_days": 6.0,
+    "mean_days": 35.3,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 11610
+  },
+  "36": {
+    "name": "cough",
+    "median_days": 4.0,
+    "mean_days": 38.7,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 17083
+  },
+  "20": {
+    "name": "decreased appetite",
+    "median_days": 6.0,
+    "mean_days": 32.7,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 16402
+  },
+  "2": {
+    "name": "dermatitis",
+    "median_days": 5.0,
+    "mean_days": 29.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 1973
+  },
+  "6": {
+    "name": "diarrhoea",
+    "median_days": 4.0,
+    "mean_days": 31.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 50451
+  },
+  "40": {
+    "name": "discomfort",
+    "median_days": 1.0,
+    "mean_days": 28.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 3753
+  },
+  "5": {
+    "name": "dizziness",
+    "median_days": 1.0,
+    "mean_days": 22.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 44772
+  },
+  "37": {
+    "name": "dry mouth",
+    "median_days": 1.0,
+    "mean_days": 19.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 6016
+  },
+  "62": {
+    "name": "dysgeusia",
+    "median_days": 0.0,
+    "mean_days": 18.4,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 5967
+  },
+  "19": {
+    "name": "dyspepsia",
+    "median_days": 1.0,
+    "mean_days": 24.2,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 6616
+  },
+  "22": {
+    "name": "dyspnoea",
+    "median_days": 2.0,
+    "mean_days": 33.7,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 42930
+  },
+  "93": {
+    "name": "epistaxis",
+    "median_days": 10.0,
+    "mean_days": 43.4,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 5319
+  },
+  "63": {
+    "name": "erythema",
+    "median_days": 1.0,
+    "mean_days": 12.6,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 36267
+  },
+  "79": {
+    "name": "erythema multiforme",
+    "median_days": 9.0,
+    "mean_days": 20.3,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 1011
+  },
+  "78": {
+    "name": "eye disorder",
+    "median_days": 2.0,
+    "mean_days": 39.2,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 1053
+  },
+  "16": {
+    "name": "fatigue",
+    "median_days": 2.0,
+    "mean_days": 30.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 52705
+  },
+  "14": {
+    "name": "feeling abnormal",
+    "median_days": 0.0,
+    "mean_days": 20.6,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 15577
+  },
+  "65": {
+    "name": "flatulence",
+    "median_days": 1.0,
+    "mean_days": 21.6,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 3928
+  },
+  "75": {
+    "name": "flushing",
+    "median_days": 0.0,
+    "mean_days": 17.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 11127
+  },
+  "17": {
+    "name": "gastrointestinal disorder",
+    "median_days": 7.0,
+    "mean_days": 43.7,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 2650
+  },
+  "12": {
+    "name": "gastrointestinal pain",
+    "median_days": 2.0,
+    "mean_days": 28.2,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 843
+  },
+  "92": {
+    "name": "haemoglobin",
+    "median_days": 57.0,
+    "mean_days": 100.0,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 6
+  },
+  "90": {
+    "name": "haemorrhage",
+    "median_days": 15.0,
+    "mean_days": 55.0,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 5626
+  },
+  "91": {
+    "name": "hallucination",
+    "median_days": 1.0,
+    "mean_days": 19.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 5512
+  },
+  "1": {
+    "name": "headache",
+    "median_days": 1.0,
+    "mean_days": 22.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 57427
+  },
+  "81": {
+    "name": "hepatitis",
+    "median_days": 10.0,
+    "mean_days": 34.6,
+    "category": "early",
+    "category_idx": 1,
+    "report_count": 2460
+  },
+  "95": {
+    "name": "hepatobiliary disease",
+    "median_days": 34.0,
+    "mean_days": 73.7,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 33
+  },
+  "29": {
+    "name": "hyperhidrosis",
+    "median_days": 0.0,
+    "mean_days": 22.2,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 11763
+  },
+  "9": {
+    "name": "hypersensitivity",
+    "median_days": 0.0,
+    "mean_days": 17.4,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 15183
+  },
+  "43": {
+    "name": "hypertension",
+    "median_days": 4.0,
+    "mean_days": 39.3,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 9985
+  },
+  "88": {
+    "name": "hypoaesthesia",
+    "median_days": 2.0,
+    "mean_days": 35.2,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 10603
+  },
+  "26": {
+    "name": "hypotension",
+    "median_days": 1.0,
+    "mean_days": 29.4,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 15209
+  },
+  "55": {
+    "name": "ill-defined disorder",
+    "median_days": 8.0,
+    "mean_days": 53.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 1032
+  },
+  "73": {
+    "name": "immune system disorder",
+    "median_days": 31.0,
+    "mean_days": 80.5,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 377
+  },
+  "35": {
+    "name": "infection",
+    "median_days": 27.0,
+    "mean_days": 71.6,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 4167
+  },
+  "23": {
+    "name": "insomnia",
+    "median_days": 1.0,
+    "mean_days": 22.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 18853
+  },
+  "96": {
+    "name": "jaundice",
+    "median_days": 16.0,
+    "mean_days": 41.6,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 2231
+  },
+  "49": {
+    "name": "leukopenia",
+    "median_days": 14.0,
+    "mean_days": 38.0,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 4002
+  },
+  "48": {
+    "name": "loss of consciousness",
+    "median_days": 1.0,
+    "mean_days": 36.6,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 9258
+  },
+  "51": {
+    "name": "malaise",
+    "median_days": 2.0,
+    "mean_days": 33.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 24828
+  },
+  "68": {
+    "name": "malnutrition",
+    "median_days": 29.5,
+    "mean_days": 63.0,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 364
+  },
+  "66": {
+    "name": "mediastinal disorder",
+    "median_days": 20.5,
+    "mean_days": 53.6,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 8
+  },
+  "64": {
+    "name": "mental disorder",
+    "median_days": 4.0,
+    "mean_days": 35.6,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 1393
+  },
+  "59": {
+    "name": "muscle spasms",
+    "median_days": 3.0,
+    "mean_days": 31.2,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 13606
+  },
+  "24": {
+    "name": "musculoskeletal discomfort",
+    "median_days": 2.0,
+    "mean_days": 36.6,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 803
+  },
+  "39": {
+    "name": "myalgia",
+    "median_days": 4.0,
+    "mean_days": 32.4,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 12905
+  },
+  "0": {
+    "name": "nausea",
+    "median_days": 1.0,
+    "mean_days": 21.8,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 72519
+  },
+  "32": {
+    "name": "nervous system disorder",
+    "median_days": 4.0,
+    "mean_days": 41.0,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 761
+  },
+  "70": {
+    "name": "nervousness",
+    "median_days": 0.0,
+    "mean_days": 19.1,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 3383
+  },
+  "41": {
+    "name": "oedema",
+    "median_days": 12.0,
+    "mean_days": 42.8,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 2856
+  },
+  "80": {
+    "name": "oedema peripheral",
+    "median_days": 13.0,
+    "mean_days": 45.1,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 6189
+  },
+  "15": {
+    "name": "pain",
+    "median_days": 3.0,
+    "mean_days": 37.2,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 25721
+  },
+  "50": {
+    "name": "palpitations",
+    "median_days": 1.0,
+    "mean_days": 23.5,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 11029
+  },
+  "25": {
+    "name": "paraesthesia",
+    "median_days": 2.0,
+    "mean_days": 27.6,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 14113
+  },
+  "87": {
+    "name": "pharyngitis",
+    "median_days": 18.0,
+    "mean_days": 58.5,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 518
+  },
+  "7": {
+    "name": "pruritus",
+    "median_days": 1.0,
+    "mean_days": 19.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 40579
+  },
+  "3": {
+    "name": "rash",
+    "median_days": 4.0,
+    "mean_days": 24.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 42883
+  },
+  "86": {
+    "name": "rhinitis",
+    "median_days": 3.0,
+    "mean_days": 46.1,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 369
+  },
+  "33": {
+    "name": "shock",
+    "median_days": 1.0,
+    "mean_days": 24.4,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 1083
+  },
+  "94": {
+    "name": "sinusitis",
+    "median_days": 23.0,
+    "mean_days": 65.3,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 3722
+  },
+  "27": {
+    "name": "skin disorder",
+    "median_days": 8.0,
+    "mean_days": 43.7,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 1459
+  },
+  "21": {
+    "name": "somnolence",
+    "median_days": 0.0,
+    "mean_days": 13.7,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 17829
+  },
+  "98": {
+    "name": "stevens-johnson syndrome",
+    "median_days": 10.0,
+    "mean_days": 19.9,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 1451
+  },
+  "99": {
+    "name": "stomatitis",
+    "median_days": 12.0,
+    "mean_days": 38.1,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 4177
+  },
+  "53": {
+    "name": "syncope",
+    "median_days": 7.0,
+    "mean_days": 54.1,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 8165
+  },
+  "34": {
+    "name": "tachycardia",
+    "median_days": 0.0,
+    "mean_days": 19.7,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 9092
+  },
+  "72": {
+    "name": "tension",
+    "median_days": 0.0,
+    "mean_days": 16.8,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 291
+  },
+  "28": {
+    "name": "thrombocytopenia",
+    "median_days": 14.0,
+    "mean_days": 39.9,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 8481
+  },
+  "77": {
+    "name": "tinnitus",
+    "median_days": 2.0,
+    "mean_days": 26.1,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 4072
+  },
+  "60": {
+    "name": "tremor",
+    "median_days": 1.0,
+    "mean_days": 23.4,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 13937
+  },
+  "84": {
+    "name": "urethral disorder",
+    "median_days": 44.5,
+    "mean_days": 89.4,
+    "category": "late",
+    "category_idx": 3,
+    "report_count": 14
+  },
+  "85": {
+    "name": "urinary tract disorder",
+    "median_days": 9.0,
+    "mean_days": 45.0,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 195
+  },
+  "11": {
+    "name": "urticaria",
+    "median_days": 0.0,
+    "mean_days": 16.0,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 19760
+  },
+  "52": {
+    "name": "vertigo",
+    "median_days": 3.0,
+    "mean_days": 35.1,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 5486
+  },
+  "61": {
+    "name": "vision blurred",
+    "median_days": 1.0,
+    "mean_days": 25.4,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 10810
+  },
+  "83": {
+    "name": "visual impairment",
+    "median_days": 3.0,
+    "mean_days": 34.1,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 5831
+  },
+  "4": {
+    "name": "vomiting",
+    "median_days": 1.0,
+    "mean_days": 24.9,
+    "category": "acute",
+    "category_idx": 0,
+    "report_count": 43911
+  },
+  "30": {
+    "name": "anorexia",
+    "median_days": 14.0,
+    "mean_days": 14.0,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 0
+  },
+  "42": {
+    "name": "unspecified disorder of skin and subcutaneous tissue",
+    "median_days": 14.0,
+    "mean_days": 14.0,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 0
+  },
+  "54": {
+    "name": "convulsion",
+    "median_days": 14.0,
+    "mean_days": 14.0,
+    "category": "delayed",
+    "category_idx": 2,
+    "report_count": 0
+  }
+}

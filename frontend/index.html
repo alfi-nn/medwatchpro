@@ -856,6 +856,50 @@
             background: rgba(255, 255, 255, 0.05);
             color: var(--text-muted);
         }
+
+        /* ── Temporal Onset Badges ──────────────────── */
+        .onset-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-left: 0.3rem;
+        }
+
+        .onset-badge.acute {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+        }
+
+        .onset-badge.early {
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+        }
+
+        .onset-badge.delayed {
+            background: rgba(250, 204, 21, 0.15);
+            color: #facc15;
+        }
+
+        .onset-badge.late {
+            background: rgba(96, 165, 250, 0.15);
+            color: #60a5fa;
+        }
+
+        .onset-badge.chronic {
+            background: rgba(167, 139, 250, 0.15);
+            color: #a78bfa;
+        }
+
+        .onset-info {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-left: auto;
+            white-space: nowrap;
+        }
     </style>
 </head>
 
@@ -916,15 +960,27 @@
             <div class="combo-inputs" id="comboInputs">
                 <div class="combo-drug-row">
                     <label>Drug 1</label>
-                    <input type="text" id="comboDrug1" placeholder="e.g., Aspirin">
+                    <div class="search-wrapper combo-search-wrapper">
+                        <input type="text" class="search-input" id="comboDrug1" placeholder="e.g., Aspirin"
+                            autocomplete="off">
+                        <div class="search-results" id="searchResults1"></div>
+                    </div>
                 </div>
                 <div class="combo-drug-row">
                     <label>Drug 2</label>
-                    <input type="text" id="comboDrug2" placeholder="e.g., Warfarin">
+                    <div class="search-wrapper combo-search-wrapper">
+                        <input type="text" class="search-input" id="comboDrug2" placeholder="e.g., Warfarin"
+                            autocomplete="off">
+                        <div class="search-results" id="searchResults2"></div>
+                    </div>
                 </div>
                 <div class="combo-drug-row">
                     <label>Drug 3</label>
-                    <input type="text" id="comboDrug3" placeholder="(optional)">
+                    <div class="search-wrapper combo-search-wrapper">
+                        <input type="text" class="search-input" id="comboDrug3" placeholder="(optional)"
+                            autocomplete="off">
+                        <div class="search-results" id="searchResults3"></div>
+                    </div>
                 </div>
                 <button class="combo-analyze-btn" onclick="analyzeCombination()">&#128300; Analyze Combination</button>
             </div>
@@ -1020,22 +1076,25 @@
             }
         }
 
-        // ── Search ──────────────────────────────────
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
+        // ── Search & Autocomplete ──────────────────────────────────
+        function setupAutocomplete(inputId, resultsId, onSelectCallback) {
+            const inputEl = document.getElementById(inputId);
+            const resultsEl = document.getElementById(resultsId);
+            let debounceTimer;
 
-        searchInput.addEventListener('input', () => {
-            clearTimeout(debounceTimer);
-            const q = searchInput.value.trim();
-            if (q.length < 2) { searchResults.classList.remove('active'); return; }
-            debounceTimer = setTimeout(() => searchDrugs(q), 200);
-        });
+            inputEl.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                const q = inputEl.value.trim();
+                if (q.length < 2) { resultsEl.classList.remove('active'); return; }
+                debounceTimer = setTimeout(() => fetchSearchSuggestions(q, resultsEl, onSelectCallback), 200);
+            });
 
-        searchInput.addEventListener('blur', () => {
-            setTimeout(() => searchResults.classList.remove('active'), 200);
-        });
+            inputEl.addEventListener('blur', () => {
+                setTimeout(() => resultsEl.classList.remove('active'), 200);
+            });
+        }
 
-        async function searchDrugs(query) {
+        async function fetchSearchSuggestions(query, resultsEl, onSelectCallback) {
             try {
                 const res = await fetch(`${API}/api/search`, {
                     method: 'POST',
@@ -1044,21 +1103,30 @@
                 });
                 const data = await res.json();
                 if (data.results.length > 0) {
-                    searchResults.innerHTML = data.results.map(d => {
-                        // Escape quotes so they don't break the HTML string
-                        const escapedName = d.name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                        return `
-                        <div class="search-result-item" onmousedown="analyzeDrug('${escapedName}')">
-                            <div class="result-name">${d.name}</div>
-                            <div class="result-id">${d.drug_id}</div>
-                        </div>
-                        `;
-                    }).join('');
-                    searchResults.classList.add('active');
+                    // Create unattached elements to avoid breaking HTML strings with quotes
+                    resultsEl.innerHTML = '';
+                    data.results.forEach(d => {
+                        const item = document.createElement('div');
+                        item.className = 'search-result-item';
+                        item.onmousedown = () => onSelectCallback(d.name, d.drug_id);
+
+                        const nameDiv = document.createElement('div');
+                        nameDiv.className = 'result-name';
+                        nameDiv.textContent = d.name;
+
+                        const idDiv = document.createElement('div');
+                        idDiv.className = 'result-id';
+                        idDiv.textContent = d.drug_id;
+
+                        item.appendChild(nameDiv);
+                        item.appendChild(idDiv);
+                        resultsEl.appendChild(item);
+                    });
+                    resultsEl.classList.add('active');
                 } else {
                     // Provide option to analyze as SMILES if it looks vaguely like one
                     if (query.match(/[CNOcno\(\)\[\]\=\#]/) && query.length > 4) {
-                        searchResults.innerHTML = `
+                        resultsEl.innerHTML = `
                             <div class="search-result-item" onmousedown="analyzeDrug('${query.replace(/'/g, "\\'")}', true)">
                                 <div class="result-name">Analyze as novel SMILES string:</div>
                                 <div class="result-id" style="color: var(--accent-blue)">${query}</div>
@@ -1123,16 +1191,21 @@
             if (data.side_effects.length === 0) {
                 seList.innerHTML = '<div class="empty-state">No significant side effects predicted above threshold</div>';
             } else {
-                seList.innerHTML = data.side_effects.map(se => `
+                seList.innerHTML = data.side_effects.map(se => {
+                    const onsetBadge = se.onset_category && se.onset_category !== 'unknown'
+                        ? `<span class="onset-badge ${se.onset_category}">${se.onset_label}</span>`
+                        : '';
+                    return `
                     <div class="se-item">
-                        <span class="se-name">${se.name}</span>
+                        <span class="se-name">${se.name}${onsetBadge}</span>
                         <div class="se-bar-container">
                             <div class="se-bar ${se.risk_level}" style="width:${se.probability * 100}%"></div>
                         </div>
                         <span class="se-prob ${se.risk_level}">${(se.probability * 100).toFixed(1)}%</span>
                         <span class="risk-badge ${se.risk_level}">${se.risk_level}</span>
                     </div>
-                `).join('');
+                    `;
+                }).join('');
             }
 
             // Biomarkers
@@ -1269,9 +1342,12 @@
                     const synergyBadge = se.interaction_amplified
                         ? `<span class="synergy-badge amplified">\u26a0 Amplified +${(se.synergy_score * 100).toFixed(1)}%</span>`
                         : '';
+                    const onsetBadge = se.onset_category && se.onset_category !== 'unknown'
+                        ? `<span class="onset-badge ${se.onset_category}">${se.onset_label}</span>`
+                        : '';
                     return `
                         <div class="se-item" style="${se.interaction_amplified ? 'border-color: rgba(239,68,68,0.3);' : ''}">
-                            <span class="se-name">${se.name}${synergyBadge}</span>
+                            <span class="se-name">${se.name}${onsetBadge}${synergyBadge}</span>
                             <div class="se-bar-container">
                                 <div class="se-bar ${se.risk_level}" style="width:${se.probability * 100}%"></div>
                             </div>
@@ -1283,6 +1359,37 @@
                 }).join('');
             } else {
                 seHtml = '<div class="empty-state">No significant combined side effects above threshold</div>';
+            }
+
+            // Biomarker interactions for combo
+            let comboBioHtml = '';
+            if (data.biomarkers && data.biomarkers.length > 0) {
+                comboBioHtml = `
+                    <div class="results-card">
+                        <div class="section-title">
+                            <span class="icon">&#129516;</span> Biomarker Interactions
+                        </div>
+                        <div class="bio-list">
+                            ${data.biomarkers.map(b => `
+                                <div class="bio-card">
+                                    <div class="bio-gene">${b.drug} → ${b.gene} (${b.change})</div>
+                                    <div class="bio-protein">${b.protein}</div>
+                                    <div class="bio-prediction ${b.prediction}">${b.prediction}</div>
+                                    <div class="bio-confidence">Confidence: ${(b.confidence * 100).toFixed(1)}%</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else {
+                comboBioHtml = `
+                    <div class="results-card">
+                        <div class="section-title">
+                            <span class="icon">&#129516;</span> Biomarker Interactions
+                        </div>
+                        <div class="empty-state">No significant biomarker interactions found for this combination</div>
+                    </div>
+                `;
             }
 
             panel.innerHTML = `
@@ -1313,10 +1420,28 @@
                     </div>
                     <div class="se-list">${seHtml}</div>
                 </div>
+                ${comboBioHtml}
             `;
         }
 
         // ── Init ────────────────────────────────────
+        // Initialize autocompletes
+        setupAutocomplete('searchInput', 'searchResults', (name, id) => {
+            document.getElementById('searchInput').value = name;
+            analyzeDrug(name);
+        });
+
+        // Combo autocompletes just fill the input
+        setupAutocomplete('comboDrug1', 'searchResults1', (name) => {
+            document.getElementById('comboDrug1').value = name;
+        });
+        setupAutocomplete('comboDrug2', 'searchResults2', (name) => {
+            document.getElementById('comboDrug2').value = name;
+        });
+        setupAutocomplete('comboDrug3', 'searchResults3', (name) => {
+            document.getElementById('comboDrug3').value = name;
+        });
+
         loadStats();
     </script>
 </body>
