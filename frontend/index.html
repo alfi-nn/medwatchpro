@@ -1596,7 +1596,7 @@
                 let html = '<h4 style="margin-bottom: 1rem; color: var(--text-color);">Causal Impact on Side Effects (Absolute Drop)</h4>';
 
                 data.results.forEach(r => {
-                    const isSignificant = r.causal_impact >= 0.05;
+                    const isSignificant = r.is_causal;
                     const impactClass = isSignificant ? 'significant' : 'minor';
                     const itemClass = isSignificant ? 'causal' : '';
                     const impactStr = r.causal_impact > 0 ? `-${(r.causal_impact * 100).toFixed(1)}%` : `+${Math.abs(r.causal_impact * 100).toFixed(1)}%`;
