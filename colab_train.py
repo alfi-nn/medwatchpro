@@ -26,7 +26,12 @@ import torch.nn.functional as F
 import numpy as np
 from torch_geometric.nn import HGTConv, Linear
 from torch_geometric.data import HeteroData
-from sklearn.metrics import roc_auc_score, f1_score, classification_report
+from sklearn.metrics import roc_auc_score, f1_score, classification_report, confusion_matrix
+import matplotlib
+matplotlib.use('Agg')  # Non-interactive backend for Colab/server
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import seaborn as sns
 # from google.colab import files  # Uncomment in Colab
 
 # ── HGT Model ───────────────────────────────────────────────
@@ -181,7 +186,7 @@ def train_hgt(graph_path="graph_data.pt", epochs=100, lr=1e-3, patience=20):
     # Training loop
     best_auc = 0.0
     wait = 0
-    hist = {"loss": [], "val_auc": [], "val_f1": [], "bio_f1": []}
+    hist = {"loss": [], "se_loss": [], "bio_loss": [], "val_auc": [], "val_f1": [], "bio_acc": [], "bio_f1": []}
 
     print(f"\nTraining {epochs} epochs (patience={patience})")
     print("-" * 70)
@@ -207,8 +212,11 @@ def train_hgt(graph_path="graph_data.pt", epochs=100, lr=1e-3, patience=20):
         ba, bf = eval_bio(model, x_dict, eid, bio_ei, bio_labels, bio_val_m)
 
         hist["loss"].append(loss.item())
+        hist["se_loss"].append(se_l.item())
+        hist["bio_loss"].append(bio_l.item())
         hist["val_auc"].append(va)
         hist["val_f1"].append(vf)
+        hist["bio_acc"].append(float(ba))
         hist["bio_f1"].append(bf)
 
         if ep % 5 == 0 or ep == 1:
@@ -262,12 +270,148 @@ def train_hgt(graph_path="graph_data.pt", epochs=100, lr=1e-3, patience=20):
 
     print(f"\nSaved: best_hgt_model.pt, training_history.json, results.json")
 
+    # ── Generate report figures ──────────────────────────────
+    print("\n" + "=" * 70)
+    print("GENERATING REPORT FIGURES")
+    print("=" * 70)
+    generate_report_figures(hist, bt, bp, ckpt["epoch"])
+
     # Download files (uncomment in Colab)
     # files.download("best_hgt_model.pt")
     # files.download("training_history.json")
     # files.download("results.json")
+    # files.download("training_curves.png")
+    # files.download("biomarker_confusion_matrix.png")
 
     return model, hist, results
+
+
+def generate_report_figures(hist, bio_targets, bio_preds, best_epoch):
+    """Generate publication-quality figures for the project report."""
+
+    sns.set_theme(style="whitegrid", font_scale=1.1)
+    epochs = list(range(1, len(hist["loss"]) + 1))
+
+    # ── Figure 1: Training Curves (Loss + Val AUC) ───────────
+    fig, ax1 = plt.subplots(figsize=(12, 5))
+
+    # Left axis: Losses
+    color_total = "#e63946"
+    color_se = "#457b9d"
+    color_bio = "#2a9d8f"
+    ax1.plot(epochs, hist["loss"], color=color_total, linewidth=2, label="Total Loss", alpha=0.9)
+    ax1.plot(epochs, hist["se_loss"], color=color_se, linewidth=1.2, label="SE Loss", linestyle="--", alpha=0.7)
+    ax1.plot(epochs, hist["bio_loss"], color=color_bio, linewidth=1.2, label="Bio Loss", linestyle="--", alpha=0.7)
+    ax1.set_xlabel("Epoch", fontsize=13, fontweight="bold")
+    ax1.set_ylabel("Loss", fontsize=13, fontweight="bold", color=color_total)
+    ax1.tick_params(axis="y", labelcolor=color_total)
+    ax1.set_xlim(1, len(epochs))
+
+    # Right axis: Validation AUC
+    ax2 = ax1.twinx()
+    color_auc = "#4361ee"
+    ax2.plot(epochs, hist["val_auc"], color=color_auc, linewidth=2.5, label="Val ROC-AUC", alpha=0.95)
+    ax2.set_ylabel("Validation ROC-AUC", fontsize=13, fontweight="bold", color=color_auc)
+    ax2.tick_params(axis="y", labelcolor=color_auc)
+
+    # Mark best epoch
+    if best_epoch <= len(epochs):
+        best_auc = hist["val_auc"][best_epoch - 1]
+        ax2.axvline(x=best_epoch, color="#aaa", linestyle=":", linewidth=1.5, alpha=0.7)
+        ax2.scatter([best_epoch], [best_auc], color=color_auc, s=120, zorder=5,
+                    edgecolors="white", linewidths=2)
+        ax2.annotate(f"Best: {best_auc:.4f}\n(Epoch {best_epoch})",
+                     xy=(best_epoch, best_auc),
+                     xytext=(best_epoch + len(epochs)*0.05, best_auc - 0.02),
+                     fontsize=10, fontweight="bold", color=color_auc,
+                     arrowprops=dict(arrowstyle="->", color=color_auc, lw=1.5))
+
+    # Early stop marker
+    ax2.axvline(x=len(epochs), color="#e63946", linestyle="--", linewidth=1, alpha=0.5)
+    ax1.annotate("Early Stop", xy=(len(epochs), hist["loss"][-1]),
+                 xytext=(len(epochs) - len(epochs)*0.12, max(hist["loss"]) * 0.85),
+                 fontsize=9, color="#e63946", alpha=0.7,
+                 arrowprops=dict(arrowstyle="->", color="#e63946", lw=1, alpha=0.5))
+
+    # Combined legend
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc="center right", fontsize=10,
+               framealpha=0.9, edgecolor="#ddd")
+
+    ax1.set_title("MedWatchPro HGT Training: Loss Convergence & Validation ROC-AUC",
+                  fontsize=14, fontweight="bold", pad=15)
+    fig.tight_layout()
+    fig.savefig("training_curves.png", dpi=300, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print("  Saved: training_curves.png")
+
+    # ── Figure 2: Biomarker Confusion Matrix ─────────────────
+    cm = confusion_matrix(bio_targets, bio_preds, labels=[0, 1, 2])
+    cm_pct = cm.astype(float) / cm.sum(axis=1, keepdims=True) * 100
+
+    fig, ax = plt.subplots(figsize=(7, 6))
+    class_names = ["Adverse", "Efficacy", "Other"]
+
+    # Annotation: count + percentage
+    annot = []
+    for i in range(cm.shape[0]):
+        row = []
+        for j in range(cm.shape[1]):
+            row.append(f"{cm[i, j]}\n({cm_pct[i, j]:.1f}%)")
+        annot.append(row)
+
+    sns.heatmap(cm, annot=annot, fmt="", cmap="Blues",
+                xticklabels=class_names, yticklabels=class_names,
+                linewidths=1, linecolor="white", square=True,
+                cbar_kws={"label": "Count", "shrink": 0.8}, ax=ax)
+
+    ax.set_xlabel("Predicted Label", fontsize=13, fontweight="bold", labelpad=10)
+    ax.set_ylabel("True Label", fontsize=13, fontweight="bold", labelpad=10)
+    ax.set_title("Biomarker Interaction Classification\nConfusion Matrix (Test Set)",
+                 fontsize=14, fontweight="bold", pad=15)
+    ax.tick_params(axis="both", labelsize=12)
+
+    fig.tight_layout()
+    fig.savefig("biomarker_confusion_matrix.png", dpi=300, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print("  Saved: biomarker_confusion_matrix.png")
+
+    # ── Figure 3: Validation Metrics Over Epochs ─────────────
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+    # Side-Effect metrics
+    ax1.plot(epochs, hist["val_auc"], color="#4361ee", linewidth=2, label="ROC-AUC")
+    ax1.plot(epochs, hist["val_f1"], color="#f72585", linewidth=2, label="F1-Score")
+    if best_epoch <= len(epochs):
+        ax1.axvline(x=best_epoch, color="#aaa", linestyle=":", linewidth=1, alpha=0.5)
+    ax1.set_xlabel("Epoch", fontweight="bold")
+    ax1.set_ylabel("Score", fontweight="bold")
+    ax1.set_title("Side-Effect Prediction (Validation)", fontweight="bold")
+    ax1.legend(framealpha=0.9)
+    ax1.set_xlim(1, len(epochs))
+    ax1.set_ylim(0, 1.05)
+
+    # Biomarker metrics
+    ax2.plot(epochs, hist["bio_acc"], color="#4cc9f0", linewidth=2, label="Accuracy")
+    ax2.plot(epochs, hist["bio_f1"], color="#7209b7", linewidth=2, label="Macro F1")
+    if best_epoch <= len(epochs):
+        ax2.axvline(x=best_epoch, color="#aaa", linestyle=":", linewidth=1, alpha=0.5)
+    ax2.set_xlabel("Epoch", fontweight="bold")
+    ax2.set_ylabel("Score", fontweight="bold")
+    ax2.set_title("Biomarker Classification (Validation)", fontweight="bold")
+    ax2.legend(framealpha=0.9)
+    ax2.set_xlim(1, len(epochs))
+    ax2.set_ylim(0, 1.05)
+
+    fig.suptitle("MedWatchPro HGT — Validation Metrics Over Training",
+                 fontsize=14, fontweight="bold", y=1.02)
+    fig.tight_layout()
+    fig.savefig("validation_metrics.png", dpi=300, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    print("  Saved: validation_metrics.png")
+
+    print("\n  All 3 report figures generated successfully!")
 
 
 # ── Run ──────────────────────────────────────────────────────

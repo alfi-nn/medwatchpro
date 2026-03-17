@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedWatchPro - AI Drug Safety</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #041f23;
+            --bg-gradient: radial-gradient(circle at center, #0a3d42 0%, #021113 100%);
+            --text-color: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.65);
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.15);
+            --accent-glow: rgba(45, 212, 191, 0.3);
+            --border: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(4, 31, 35, 0.55);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ── Background DNA Image ── */
+        .bg-image {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-image: url('dna_background_8k_7680x4320.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+
+        /* lighter vignette so DNA imagepops more */
+        .bg-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 55% 50%, transparent 30%, rgba(2, 17, 19, 0.65) 95%);
+        }
+
+        /* ── Navigation ── */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 4rem;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .logo {
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon { color: var(--accent); font-size: 1.8rem; }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 400;
+        }
+
+        .nav-links li::before {
+            content: "";
+            display: block;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        .nav-links li:hover { color: var(--text-color); }
+
+        .btn-launch {
+            border: 1px solid var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.7rem 1.6rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-launch:hover {
+            background: rgba(45, 212, 191, 0.25);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* ── Main grid ── */
+        .hero-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: calc(100vh - 85px);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── LEFT: headline + metrics ── */
+        .hero-left {
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hero-top-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent-dim);
+            border: 1px solid rgba(45,212,191,0.3);
+            border-radius: 20px;
+            padding: 0.4rem 1rem;
+            font-size: 0.78rem;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: fit-content;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-top-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .hero-headline {
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 4.8rem;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.6);
+        }
+
+        .hero-headline .accent-word { color: var(--accent); }
+
+        .hero-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.7;
+            max-width: 420px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Metric pills column (Right side) */
+        .hero-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            padding-right: 1rem;
+            align-items: flex-end;
+        }
+
+        .metric-pill {
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 140px;
+            transition: transform 0.3s;
+        }
+
+        .metric-pill:hover {
+            transform: translateY(-3px);
+        }
+
+        .metric-value {
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 1.6rem;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 0.3rem;
+            line-height: 1.3;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-footer-left {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 3rem;
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+        }
+
+        .hero-footer-left strong { color: #fff; display: block; margin-top: 4px; font-family: 'Fjalla One', sans-serif; font-size: 0.95rem; font-weight: 400; }
+
+        /* ── RIGHT: Feature cards around DNA image ── */
+        .hero-right {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-left: 1px solid var(--border);
+        }
+
+        /* Top feature cards (single column) */
+        .features-top {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Middle label (sits over the DNA image) */
+        .dna-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .dna-label-ring {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            border: 1px solid rgba(45,212,191,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, rgba(45,212,191,0.08) 0%, transparent 70%);
+            box-shadow: 0 0 40px rgba(45,212,191,0.1), inset 0 0 30px rgba(45,212,191,0.05);
+            animation: ringPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes ringPulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(45,212,191,0.1), inset 0 0 30px rgba(45,212,191,0.05); }
+            50% { box-shadow: 0 0 60px rgba(45,212,191,0.2), inset 0 0 40px rgba(45,212,191,0.1); }
+        }
+
+        .dna-label-inner {
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 1rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Bottom feature cards (single column) */
+        .features-bottom {
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Feature card shared styles */
+        .feat-card {
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-right: none;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.4s ease, backdrop-filter 0.4s ease, transform 0.2s ease;
+            cursor: default;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feat-card:last-child { border-bottom: none; }
+
+        .feat-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(45,212,191,0.06) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .feat-card:hover::after { opacity: 1; }
+        .feat-card:hover {
+            background: rgba(4, 31, 35, 0.72);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .feat-icon {
+            font-size: 1.6rem;
+            margin-bottom: 0.3rem;
+            filter: drop-shadow(0 0 6px var(--accent-glow));
+        }
+
+        .feat-tag {
+            font-size: 0.68rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+
+        .feat-title {
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 1rem;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .feat-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.4s ease;
+            margin-top: 0;
+        }
+
+        .feat-card:hover .feat-desc {
+            max-height: 150px;
+            opacity: 1;
+            margin-top: 0.5rem;
+        }
+
+        /* Middle strip with 3 thinner feature rows */
+        .features-mid {
+            flex: 1;
+            display: grid;
+            grid-template-rows: 1fr 1fr 1fr;
+            position: relative;
+        }
+
+        .feat-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.2rem 1.8rem;
+            border-bottom: 1px solid var(--border);
+            background: transparent;
+            backdrop-filter: none;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease;
+        }
+
+        .feat-row:last-child { border-bottom: none; }
+        .feat-row:hover {
+            background: rgba(4, 31, 35, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .feat-row-icon { font-size: 1.4rem; flex-shrink: 0; }
+
+        .feat-row-body { flex: 1; }
+
+        .feat-row-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.2rem;
+        }
+
+        .feat-row-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, opacity 0.4s ease;
+        }
+
+        .feat-row:hover .feat-row-desc {
+            max-height: 80px;
+            opacity: 1;
+            margin-top: 0.4rem;
+        }
+
+        .feat-row-badge {
+            font-size: 0.7rem;
+            background: var(--accent-dim);
+            border: 1px solid rgba(45,212,191,0.3);
+            color: var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-left > * {
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .hero-left > *:nth-child(1) { animation-delay: 0.1s; }
+        .hero-left > *:nth-child(2) { animation-delay: 0.2s; }
+        .hero-left > *:nth-child(3) { animation-delay: 0.3s; }
+        .hero-left > *:nth-child(4) { animation-delay: 0.4s; }
+        .hero-left > *:nth-child(5) { animation-delay: 0.5s; }
+
+        .hero-right > * { animation: fadeUp 0.6s ease both; }
+        .hero-right > *:nth-child(1) { animation-delay: 0.2s; }
+        .hero-right > *:nth-child(2) { animation-delay: 0.3s; }
+        .hero-right > *:nth-child(3) { animation-delay: 0.4s; }
+        .hero-right > *:nth-child(4) { animation-delay: 0.5s; }
+        .hero-right > *:nth-child(5) { animation-delay: 0.6s; }
+    </style>
+</head>
+
+<body>
+    <!-- Full Screen Background DNA Image -->
+    <div class="bg-image"></div>
+
+    <nav>
+        <div class="logo">
+            <span class="logo-icon">&#10022;</span> MedWatchPro
+        </div>
+        <ul class="nav-links">
+            <a href="about.html" style="color: inherit; text-decoration: none;"><li>About Platform</li></a>
+            <li>GitHub</li>
+        </ul>
+        <a href="index.html" class="btn-launch">Launch App →</a>
+    </nav>
+
+    <div class="hero-container">
+
+        <!-- ═══ LEFT COLUMN ═══ -->
+        <div class="hero-left">
+
+            <div class="hero-top-badge">
+                <span></span> Live AI System · 14,616 Drugs Indexed
+            </div>
+
+            <div>
+                <h1 class="hero-headline">
+                    AI-Driven<br>
+                    <span class="accent-word">Safety</span> for<br>
+                    a Healthier<br>
+                    World
+                </h1>
+
+                <p class="hero-desc">
+                    From novel compound screening to complex polypharmacy analysis —
+                    a heterogeneous graph AI platform predicting adverse drug reactions,
+                    biomarker responses, and drug combination risks with full explainability.
+                </p>
+            </div>
+
+            <div class="hero-footer-left">
+                <div>
+                    System Version
+                    <strong>v2.1 ChemBERTa</strong>
+                </div>
+                <div>
+                    Core Architecture
+                    <strong>HGT · PyTorch Geometric</strong>
+                </div>
+                <div>
+                    Training Data
+                    <strong>DrugBank · SIDER · FAERS</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ RIGHT COLUMN ═══ -->
+        <div class="hero-right">
+            <div class="metric-pill">
+                <span class="metric-value">0.904</span>
+                <span class="metric-label">ROC-AUC Score</span>
+            </div>
+            <div class="metric-pill">
+                <span class="metric-value">90.6%</span>
+                <span class="metric-label">Biomarker Accuracy</span>
+            </div>
+            <div class="metric-pill">
+                <span class="metric-value">100</span>
+                <span class="metric-label">ADR Classes</span>
+            </div>
+            <div class="metric-pill">
+                <span class="metric-value">891K</span>
+                <span class="metric-label">Model Params</span>
+            </div>
+            <div class="metric-pill">
+                <span class="metric-value">2.3M</span>
+                <span class="metric-label">Drug-Drug Edges</span>
+            </div>
+        </div>
+
+    </div><!-- /hero-container -->
+
+</body>
+</html>

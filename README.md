@@ -264,14 +264,33 @@ pip install -r requirements.txt
    - Download: `meddra_all_se.tsv.gz`, `drug_names.tsv`
    - Place in project root
 
-### 3. Run Data Preprocessing
+### 3. Run Preprocessing & Feature Generation
+
+Execute these scripts in order to build the knowledge graph and generate embeddings:
 
 ```bash
+# 1. Parse raw DrugBank/SIDER data into clean node/edge CSVs
 python scripts/01_prepare_nodes_and_edges.py
+
+# 2. Generate chemical & protein embeddings (ChemBERTa + ProtBERT)
 python scripts/02_generate_embeddings.py
+
+# 3. Process FDA FAERS data for temporal onset mapping
+python scripts/06_temporal_adr.py
+
+# 4. Build the PyG HeteroData graph object
+python scripts/03_build_graph.py
 ```
 
-> **Note**: ProtBERT embedding generation requires ~8GB VRAM. If your GPU is smaller, use Google Colab (see below).
+### 4. Local Training (Optional)
+
+If you have a local GPU (≥8GB VRAM), you can train the model locally:
+
+```bash
+python scripts/05_train.py
+```
+
+This will save the trained model weights to `models/best_hgt_model.pt`. If you don't have a local GPU, follow the **Google Colab** instructions below.
 
 ---
 

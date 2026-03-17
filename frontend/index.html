@@ -1,1132 +1,543 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedWatchPro - AI Drug Safety Analysis</title>
-    <meta name="description"
-        content="AI-powered adverse drug reaction and biomarker prediction using Heterogeneous Graph Transformers">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <title>MedWatchPro - AI Drug Safety Dashboard</title>
+    <meta name="description" content="AI-powered adverse drug reaction and biomarker prediction using Heterogeneous Graph Transformers">
+    <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --bg-primary: #0a0e1a;
-            --bg-secondary: #111827;
-            --bg-card: #1a1f35;
-            --bg-card-hover: #222845;
-            --border: #2a3050;
-            --text-primary: #e8eaf0;
-            --text-secondary: #9ca3bc;
-            --text-muted: #6b7280;
-            --accent-blue: #3b82f6;
-            --accent-purple: #8b5cf6;
-            --accent-cyan: #06b6d4;
+            --bg-primary: #e0f2f1;
+            --bg-card: rgba(255, 255, 255, 0.45);
+            --bg-card-hover: rgba(255, 255, 255, 0.65);
+            --border: rgba(0, 150, 136, 0.15);
+            --text-primary: #004d40;
+            --text-secondary: #00695c;
+            --text-muted: #4db6ac;
+            --accent: #00897b;
+            --accent-light: #0ea5e9;
             --accent-green: #10b981;
             --accent-red: #ef4444;
             --accent-amber: #f59e0b;
-            --gradient-main: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            --gradient-card: linear-gradient(145deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.05));
-            --shadow-glow: 0 0 30px rgba(59, 130, 246, 0.15);
+            --gradient-main: linear-gradient(135deg, #00897b, #0ea5e9);
+            --shadow-glow: 0 0 20px rgba(45, 212, 191, 0.12);
+            --radius: 14px;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: "Fjalla One", sans-serif;
+            font-weight: 400;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
         }
-
-        /* ── Background Effects ─────────────────────── */
-        .bg-grid {
-            position: fixed;
-            inset: 0;
+        .bg-image {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background-image: url('dna_background_8k_7680x4320.png');
+            background-size: cover; background-position: center;
+            filter: blur(4px); transform: scale(1.05);
             z-index: 0;
-            background-image:
-                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+        }
+        .bg-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(224, 242, 241, 0.65);
+            z-index: 1;
         }
 
-        .bg-grid::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image: linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-        }
-
-        /* ── Header ─────────────────────────────────── */
+        /* ── Header ── */
         header {
-            position: relative;
-            z-index: 10;
-            padding: 1.5rem 2rem;
+            position: relative; z-index: 10;
+            padding: 1rem 2rem;
             border-bottom: 1px solid var(--border);
-            background: rgba(10, 14, 26, 0.8);
-            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(16px);
+            display: flex; align-items: center; justify-content: space-between;
         }
-
-        .header-content {
-            max-width: 1400px;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
+        .logo { display: flex; align-items: center; gap: 0.6rem; }
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px; height: 36px;
             background: var(--gradient-main);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: white;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; color: #fff;
         }
-
         .logo h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.3rem;
             background: var(--gradient-main);
-            -webkit-background-clip: text;
+            background-clip: text; -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
-        .logo span {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            display: block;
+        .header-nav { display: flex; gap: 0.3rem; }
+        .header-nav button {
+            padding: 0.5rem 1rem; border: none;
+            background: transparent; color: var(--text-muted);
+            font-family: inherit; font-size: 0.85rem;
+            cursor: pointer; border-radius: 8px; transition: all 0.2s;
         }
-
+        .header-nav button.active, .header-nav button:hover {
+            background: rgba(0, 137, 123, 0.12);
+            color: var(--accent);
+        }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
         .model-badge {
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            color: var(--accent-green);
-            font-size: 0.8rem;
-            font-weight: 500;
+            padding: 0.35rem 0.8rem; border-radius: 20px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: var(--accent-green); font-size: 0.75rem;
         }
 
-        /* ── Main Content ───────────────────────────── */
+        /* ── Main ── */
         main {
-            position: relative;
-            z-index: 10;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* ── Stats Bar ──────────────────────────────── */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent-blue);
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-top: 0.3rem;
-        }
-
-        .stat-value.blue {
-            color: var(--accent-blue);
-        }
-
-        .stat-value.purple {
-            color: var(--accent-purple);
-        }
-
-        .stat-value.cyan {
-            color: var(--accent-cyan);
-        }
-
-        .stat-value.green {
-            color: var(--accent-green);
-        }
-
-        /* ── Search Section ─────────────────────────── */
-        .search-section {
-            margin-bottom: 2rem;
-        }
-
-        .search-wrapper {
-            position: relative;
-            max-width: 700px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            padding-left: 3rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            color: var(--text-primary);
-            font-size: 1.05rem;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            border-color: var(--accent-blue);
-            box-shadow: var(--shadow-glow);
-        }
-
-        .search-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 1.1rem;
-        }
-
-        .search-results {
-            position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
-            right: 0;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 100;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .search-results.active {
-            display: block;
-        }
-
-        .search-result-item {
-            padding: 0.8rem 1.2rem;
-            cursor: pointer;
-            transition: background 0.2s;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .search-result-item:hover {
-            background: var(--bg-card-hover);
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        .result-name {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .result-id {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        /* ── Analysis Panel ─────────────────────────── */
-        .analysis-panel {
-            display: none;
-        }
-
-        .analysis-panel.active {
-            display: block;
-        }
-
-        .drug-header {
-            background: var(--gradient-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
+            position: relative; z-index: 10;
+            max-width: 1440px; margin: 0 auto;
             padding: 1.5rem 2rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
-        .drug-name {
-            font-size: 1.6rem;
-            font-weight: 700;
-        }
-
-        .drug-id {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 0.3rem;
-        }
-
-        .drug-smiles {
-            font-family: monospace;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            max-width: 400px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-top: 0.4rem;
-        }
-
-        /* ── XAI & Buttons ───────────────────────── */
-        .simulate-btn {
-            background: rgba(96, 165, 250, 0.1);
-            color: var(--accent-blue);
-            border: 1px solid rgba(96, 165, 250, 0.3);
-            border-radius: 4px;
-            padding: 0.2rem 0.6rem;
-            font-size: 0.7rem;
-            cursor: pointer;
+        /* ── Card ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1.2rem;
             transition: all 0.2s;
-            margin-left: max(0.5rem, auto);
         }
-
-        .simulate-btn:hover {
-            background: rgba(96, 165, 250, 0.2);
-            border-color: var(--accent-blue);
-        }
-
-        /* ── Counterfactual Modal ───────────────── */
-        .cf-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .cf-modal.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .cf-modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 2rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-
-        .cf-close {
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            font-size: 1.5rem;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        .cf-close:hover {
-            color: var(--text-color);
-        }
-
-        .cf-result-item {
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 6px;
-            padding: 1rem;
+        .card:hover { background: var(--bg-card-hover); }
+        .card-title {
+            font-size: 0.95rem; color: var(--text-primary);
             margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .card-title .icon { font-size: 1.1rem; }
+
+        /* ── Stats Row ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.8rem; margin-bottom: 1.5rem;
+        }
+        .stat-card { text-align: center; padding: 1rem; }
+        .stat-label {
+            font-size: 0.65rem; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.08em;
+        }
+        .stat-value {
+            font-size: 1.6rem; margin-top: 0.2rem;
+            color: var(--accent);
         }
 
-        .cf-result-item.causal {
-            border-left: 3px solid var(--accent-green);
-            background: rgba(52, 211, 153, 0.05);
+        /* ── Search ── */
+        .search-bar {
+            position: relative; margin-bottom: 1.5rem;
         }
-
-        .cf-metric {
-            display: flex;
-            flex-direction: column;
-            text-align: center;
+        .search-input {
+            width: 100%; padding: 0.8rem 1.2rem 0.8rem 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: inherit; font-size: 0.9rem;
+            outline: none; backdrop-filter: blur(10px);
+            transition: border 0.2s;
         }
-
-        .cf-metric-val {
-            font-size: 1.1rem;
-            font-weight: 700;
+        .search-input:focus { border-color: var(--accent); box-shadow: var(--shadow-glow); }
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-icon {
+            position: absolute; left: 0.9rem; top: 50%;
+            transform: translateY(-50%); color: var(--text-muted);
         }
-
-        .cf-metric-label {
-            font-size: 0.65rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
+        .search-results {
+            position: absolute; top: calc(100% + 4px);
+            left: 0; right: 0;
+            background: rgba(255,255,255,0.92);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            max-height: 260px; overflow-y: auto;
+            display: none; z-index: 100;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
         }
-
-        .cf-arrow {
-            color: var(--text-muted);
-            font-size: 1.2rem;
+        .search-results.active { display: block; }
+        .search-result-item {
+            padding: 0.6rem 1rem; cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s;
         }
+        .search-result-item:hover { background: rgba(0,137,123,0.08); }
+        .result-name { font-size: 0.85rem; color: var(--text-primary); }
+        .result-id { font-size: 0.7rem; color: var(--text-muted); }
 
-        .cf-impact {
-            font-weight: 700;
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-        }
-
-        .cf-impact.significant {
-            background: rgba(52, 211, 153, 0.15);
-            color: #34d399;
-        }
-
-        .cf-impact.minor {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-        }
-
-        /* ── Sections ───────────────────────────────── */
-        .section-title {
-            font-size: 1.15rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
+        /* ── Selection Pills ── */
+        .selection-pill {
+            background: rgba(14, 165, 233, 0.15);
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            color: var(--accent);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-
-        .section-title .icon {
-            font-size: 1.3rem;
+        .selection-pill button {
+            background: none; border: none; color: inherit;
+            cursor: pointer; font-size: 1.1rem; line-height: 1;
+            padding: 0; opacity: 0.7;
         }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .results-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.5rem;
-        }
-
-        /* ── Side Effects ───────────────────────────── */
-        .se-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .se-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.7rem 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 10px;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .se-item:hover {
-            border-color: var(--border);
-            background: var(--bg-card-hover);
-        }
-
-        .se-name {
-            flex: 1;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-transform: capitalize;
-        }
-
-        .se-bar-container {
-            width: 120px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-
-        .se-bar {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .se-bar.high {
-            background: linear-gradient(90deg, #ef4444, #f87171);
-        }
-
-        .se-bar.medium {
-            background: linear-gradient(90deg, #f59e0b, #fbbf24);
-        }
-
-        .se-bar.low {
-            background: linear-gradient(90deg, #10b981, #34d399);
-        }
-
-        .se-prob {
-            font-size: 0.85rem;
-            font-weight: 600;
-            min-width: 50px;
-            text-align: right;
-        }
-
-        .se-prob.high {
-            color: var(--accent-red);
-        }
-
-        .se-prob.medium {
-            color: var(--accent-amber);
-        }
-
-        .se-prob.low {
-            color: var(--accent-green);
-        }
-
-        .risk-badge {
-            padding: 0.15rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .risk-badge.high {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--accent-red);
-        }
-
-        .risk-badge.medium {
+        .selection-pill button:hover { opacity: 1; }
+        .ddi-pill {
             background: rgba(245, 158, 11, 0.15);
-            color: var(--accent-amber);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #d97706;
         }
-
-        .risk-badge.low {
+        .bio-pill {
             background: rgba(16, 185, 129, 0.15);
-            color: var(--accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #059669;
         }
 
-        /* ── Biomarkers ─────────────────────────────── */
-        .bio-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
+        /* ── Mode Tabs ── */
+        .mode-tabs {
+            display: flex; gap: 0.5rem;
+            margin-bottom: 1.2rem;
         }
-
-        .bio-item {
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 10px;
+        .mode-tab {
+            padding: 0.55rem 1.2rem;
             border: 1px solid var(--border);
-        }
-
-        .bio-gene {
-            font-weight: 700;
-            font-size: 1rem;
-            color: var(--accent-cyan);
-        }
-
-        .bio-change {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 0.2rem;
-        }
-
-        .bio-protein {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 0.2rem;
-        }
-
-        .bio-prediction {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            margin-top: 0.6rem;
-            padding: 0.3rem 0.8rem;
+            background: var(--bg-card);
             border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .bio-prediction.adverse {
-            background: rgba(239, 68, 68, 0.15);
-            color: var(--accent-red);
-        }
-
-        .bio-prediction.efficacy {
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--accent-green);
-        }
-
-        .bio-prediction.other {
-            background: rgba(107, 114, 128, 0.15);
+            font-family: inherit; font-size: 0.8rem;
             color: var(--text-muted);
+            cursor: pointer; transition: all 0.2s;
+            backdrop-filter: blur(8px);
+        }
+        .mode-tab.active {
+            background: var(--accent);
+            color: #fff; border-color: var(--accent);
         }
 
-        .bio-conf {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-left: 0.5rem;
+        /* ── Grid Layouts ── */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+        .grid-full { margin-bottom: 1.2rem; }
+
+        /* ── Drug Header ── */
+        .drug-header-card {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 1.2rem;
+        }
+        .drug-info h2 { font-size: 1.3rem; }
+        .drug-info .drug-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem; }
+        .drug-smiles {
+            font-family: monospace; font-size: 0.7rem;
+            color: var(--text-muted); max-width: 350px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
+        /* ── Table Style ── */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th {
+            text-align: left; font-size: 0.7rem;
+            color: var(--text-muted); text-transform: uppercase;
+            letter-spacing: 0.05em; padding: 0.5rem 0.6rem;
+            border-bottom: 1px solid var(--border);
         }
-
-        /* ── Explanations (XAI) ────────────────── */
-        .explanation-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
+        .data-table td {
+            padding: 0.55rem 0.6rem; font-size: 0.8rem;
+            border-bottom: 1px solid rgba(0,150,136,0.06);
+            color: var(--text-secondary);
         }
+        .data-table tbody tr:hover { background: rgba(0,137,123,0.04); }
+        .table-scroll { max-height: 380px; overflow-y: auto; }
 
-        .explanation-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.7rem 1rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 10px;
-            border: 1px solid transparent;
+        /* ── Chart ── */
+        .chart-container {
+            position: relative;
+            padding: 0.8rem 0;
+            margin-top: 0.5rem;
+            border-top: 1px solid var(--border);
+        }
+        .chart-container canvas {
+            max-height: 280px;
+            width: 100% !important;
+        }
+        .chart-toggle {
+            display: flex; justify-content: flex-end;
+            margin-bottom: 0.3rem;
+        }
+        .chart-toggle button {
+            padding: 0.2rem 0.6rem; font-size: 0.65rem;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.5);
+            border-radius: 4px; cursor: pointer;
+            font-family: inherit; color: var(--text-muted);
             transition: all 0.2s;
         }
-
-        .explanation-item:hover {
-            border-color: var(--border);
-            background: var(--bg-card-hover);
+        .chart-toggle button.active {
+            background: var(--accent); color: #fff;
+            border-color: var(--accent);
         }
 
-        .exp-type-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            min-width: 60px;
-            text-align: center;
+        /* ── Badges ── */
+        .badge {
+            display: inline-block; padding: 0.15rem 0.5rem;
+            border-radius: 6px; font-size: 0.65rem;
+            font-weight: 400; text-transform: uppercase;
+        }
+        .badge-high { background: rgba(239,68,68,0.12); color: var(--accent-red); }
+        .badge-medium { background: rgba(245,158,11,0.12); color: var(--accent-amber); }
+        .badge-low { background: rgba(16,185,129,0.12); color: var(--accent-green); }
+        .badge-adverse { background: rgba(239,68,68,0.12); color: var(--accent-red); }
+        .badge-efficacy { background: rgba(16,185,129,0.12); color: var(--accent-green); }
+        .badge-other { background: rgba(0,137,123,0.1); color: var(--text-muted); }
+
+        /* ── Probability Bar ── */
+        .prob-bar-wrap { width: 80px; height: 5px; background: rgba(0,77,64,0.08); border-radius: 3px; }
+        .prob-bar {
+            height: 100%; border-radius: 3px;
+            transition: width 0.6s ease;
+        }
+        .prob-bar.high { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .prob-bar.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .prob-bar.low { background: linear-gradient(90deg, #10b981, #34d399); }
+
+        /* ── Attention Bar ── */
+        .attn-bar-wrap { width: 100px; height: 5px; background: rgba(0,77,64,0.08); border-radius: 3px; }
+        .attn-bar {
+            height: 100%; border-radius: 3px;
+            background: var(--gradient-main);
+            transition: width 0.6s ease;
         }
 
-        .exp-type-badge.protein {
-            background: rgba(139, 92, 246, 0.15);
-            color: var(--accent-purple);
+        /* ── SMILES Input ── */
+        .smiles-input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .smiles-input {
+            flex: 1; padding: 0.7rem 1rem;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: monospace; font-size: 0.85rem;
+            color: var(--text-primary); outline: none;
+        }
+        .smiles-input:focus { border-color: var(--accent); }
+
+        /* ── Combo Input ── */
+        .combo-inputs { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+        .combo-row { display: flex; gap: 0.5rem; align-items: center; }
+        .combo-input {
+            flex: 1; padding: 0.6rem 0.8rem;
+            background: rgba(255,255,255,0.6);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit; font-size: 0.8rem;
+            color: var(--text-primary); outline: none;
         }
 
-        .exp-type-badge.drug {
-            background: rgba(59, 130, 246, 0.15);
-            color: var(--accent-blue);
+        /* ── Buttons ── */
+        .btn {
+            padding: 0.6rem 1.2rem; border: none;
+            border-radius: 8px;
+            font-family: inherit; font-size: 0.8rem;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent); color: #fff;
+        }
+        .btn-primary:hover { background: #00796b; }
+        .btn-sm {
+            padding: 0.25rem 0.6rem; font-size: 0.65rem;
+            border-radius: 4px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--accent);
+        }
+        .btn-outline:hover {
+            background: rgba(0,137,123,0.08);
         }
 
-        .exp-type-badge.info {
-            background: rgba(6, 182, 212, 0.15);
-            color: var(--accent-cyan);
+        /* ── Counterfactual Modal ── */
+        .cf-modal {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,77,64,0.3);
+            z-index: 1000;
+            justify-content: center; align-items: center;
+        }
+        .cf-modal.active { display: flex; }
+        .cf-modal-content {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            width: 90%; max-width: 580px;
+            max-height: 80vh; overflow-y: auto;
+            padding: 1.5rem; position: relative;
+        }
+        .cf-close {
+            position: absolute; top: 0.8rem; right: 1rem;
+            font-size: 1.3rem; color: var(--text-muted);
+            cursor: pointer; background: none; border: none;
         }
 
-        .exp-name {
-            flex: 1;
-            font-size: 0.9rem;
-            font-weight: 500;
+        /* ── Synergy ── */
+        .synergy-positive { color: var(--accent-red); }
+        .synergy-negative { color: var(--accent-green); }
+        .ddi-alert {
+            padding: 0.5rem 0.8rem; border-radius: 8px;
+            background: rgba(239,68,68,0.08);
+            border: 1px solid rgba(239,68,68,0.2);
+            font-size: 0.75rem; color: var(--accent-red);
+            margin-bottom: 0.5rem;
         }
 
-        .exp-bar-container {
-            width: 100px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-        }
-
-        .exp-bar {
-            height: 100%;
-            border-radius: 3px;
-            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
-            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .exp-score {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--accent-cyan);
-            min-width: 40px;
-            text-align: right;
-        }
-
-        /* ── Loading ────────────────────────────────── */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 3rem;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
+        /* ── Loading / Welcome ── */
+        .loading { display: none; text-align: center; padding: 2rem; }
+        .loading.active { display: block; }
         .spinner {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 1rem;
+            width: 32px; height: 32px; margin: 0 auto 0.8rem;
             border: 3px solid var(--border);
-            border-top: 3px solid var(--accent-blue);
+            border-top: 3px solid var(--accent);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ── Welcome ────────────────────────────────── */
-        .welcome {
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-
+        .welcome { text-align: center; padding: 3rem 2rem; }
         .welcome h2 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
+            font-size: 1.8rem; margin-bottom: 0.8rem;
             background: var(--gradient-main);
-            -webkit-background-clip: text;
+            background-clip: text; -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .welcome p { color: var(--text-muted); font-size: 0.95rem; max-width: 500px; margin: 0 auto; }
 
-        .welcome p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 2rem;
+        .hidden { display: none !important; }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .stats-row { grid-template-columns: repeat(3, 1fr); }
+            .grid-2 { grid-template-columns: 1fr; }
         }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            max-width: 900px;
-            margin: auto;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.5rem;
-            text-align: left;
-            transition: all 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-blue);
-        }
-
-        .feature-icon {
-            font-size: 2rem;
-            margin-bottom: 0.8rem;
-        }
-
-        .feature-card h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-        }
-
-        .feature-card p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* ── Responsive ─────────────────────────────── */
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ── Combination Analysis ──────────────────── */
-        .combo-toggle {
-            display: inline-flex;
-            gap: 0;
-            margin-bottom: 1rem;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .combo-toggle button {
-            padding: 0.6rem 1.2rem;
-            background: var(--bg-card);
-            border: none;
-            color: var(--text-muted);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .combo-toggle button.active {
-            background: var(--gradient-main);
-            color: white;
-        }
-
-        .combo-inputs {
-            display: none;
-            gap: 0.8rem;
-            margin-bottom: 1.5rem;
-            max-width: 700px;
-        }
-
-        .combo-inputs.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .combo-drug-row {
-            display: flex;
-            gap: 0.8rem;
-            align-items: center;
-        }
-
-        .combo-drug-row input {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .combo-drug-row input:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .combo-drug-row label {
-            font-size: 0.8rem;
-            color: var(--accent-cyan);
-            font-weight: 700;
-            min-width: 55px;
-        }
-
-        .combo-analyze-btn {
-            padding: 0.8rem 2rem;
-            background: var(--gradient-main);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            font-family: 'Inter', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            align-self: flex-start;
-        }
-
-        .combo-analyze-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-glow);
-        }
-
-        .synergy-badge {
-            display: inline-block;
-            padding: 0.15rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-left: 0.5rem;
-        }
-
-        .synergy-badge.amplified {
-            background: rgba(239, 68, 68, 0.2);
-            color: var(--accent-red);
-            animation: pulse-red 2s infinite;
-        }
-
-        @keyframes pulse-red {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.6;
-            }
-        }
-
-        .ddi-warning {
-            background: rgba(239, 68, 68, 0.08);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .ddi-warning .icon {
-            font-size: 1.5rem;
-        }
-
-        .combo-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .combo-summary-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .combo-summary-card .value {
-            font-size: 1.6rem;
-            font-weight: 700;
-        }
-
-        .combo-summary-card .label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        .individual-scores {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.3rem;
-            flex-wrap: wrap;
-        }
-
-        .individual-score-tag {
-            font-size: 0.7rem;
-            padding: 0.1rem 0.4rem;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-muted);
-        }
-
-        /* ── Temporal Onset Badges ──────────────────── */
-        .onset-badge {
-            display: inline-block;
-            padding: 0.15rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            margin-left: 0.3rem;
-        }
-
-        .onset-badge.acute {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-        }
-
-        .onset-badge.early {
-            background: rgba(251, 146, 60, 0.15);
-            color: #fb923c;
-        }
-
-        .onset-badge.delayed {
-            background: rgba(250, 204, 21, 0.15);
-            color: #facc15;
-        }
-
-        .onset-badge.late {
-            background: rgba(96, 165, 250, 0.15);
-            color: #60a5fa;
-        }
-
-        .onset-badge.chronic {
-            background: rgba(167, 139, 250, 0.15);
-            color: #a78bfa;
-        }
-
-        .onset-info {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            margin-left: auto;
-            white-space: nowrap;
+        @media (max-width: 600px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            header { flex-direction: column; gap: 0.5rem; }
         }
     </style>
 </head>
-
 <body>
-    <div class="bg-grid"></div>
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
 
     <header>
-        <div class="header-content">
-            <div class="logo">
-                <div class="logo-icon">M</div>
-                <div>
-                    <h1>MedWatchPro</h1>
-                    <span>AI-Powered Drug Safety Analysis</span>
-                </div>
-            </div>
-            <div class="model-badge" id="modelBadge">HGT Model: Loading...</div>
+        <div class="logo">
+            <div class="logo-icon">✦</div>
+            <h1>MedWatchPro</h1>
+        </div>
+        <div class="header-nav">
+            <button class="active" onclick="switchNav('dashboard')">Dashboard</button>
+            <button onclick="switchNav('dashboard')">Analysis</button>
+        </div>
+        <div class="header-right">
+            <span class="model-badge" id="aucBadge">Loading...</span>
         </div>
     </header>
 
     <main>
-        <!-- Stats -->
-        <div class="stats-grid" id="statsGrid">
-            <div class="stat-card">
-                <div class="stat-label">Drugs Analyzed</div>
-                <div class="stat-value blue" id="statDrugs">--</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Protein Targets</div>
-                <div class="stat-value purple" id="statProteins">--</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Side Effects Tracked</div>
-                <div class="stat-value cyan" id="statSE">--</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Model AUC Score</div>
-                <div class="stat-value green" id="statAUC">--</div>
-            </div>
+        <!-- Stats Row -->
+        <div class="stats-row" id="statsRow">
+            <div class="card stat-card"><div class="stat-label">Drugs</div><div class="stat-value" id="statDrugs">—</div></div>
+            <div class="card stat-card"><div class="stat-label">Proteins</div><div class="stat-value" id="statProteins">—</div></div>
+            <div class="card stat-card"><div class="stat-label">Biomarkers</div><div class="stat-value" id="statBiomarkers">—</div></div>
+            <div class="card stat-card"><div class="stat-label">Side Effects</div><div class="stat-value" id="statSE">—</div></div>
+            <div class="card stat-card"><div class="stat-label">Model AUC</div><div class="stat-value" id="statAUC">—</div></div>
+            <div class="card stat-card"><div class="stat-label">Bio Accuracy</div><div class="stat-value" id="statBioAcc">—</div></div>
         </div>
 
-        <!-- Search -->
-        <div class="search-section">
-            <div class="search-wrapper">
-                <span class="search-icon">&#128269;</span>
-                <input type="text" class="search-input" id="searchInput"
-                    placeholder="Search for a drug (e.g., aspirin, metformin, ibuprofen...)">
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" onclick="switchMode('known')">🔍 Known Drug</button>
+            <button class="mode-tab" onclick="switchMode('smiles')">🧪 Novel SMILES</button>
+            <button class="mode-tab" onclick="switchMode('combo')">💊 Drug Combination</button>
+        </div>
+
+        <!-- Known Drug Search -->
+        <div id="modeKnown">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input class="search-input" id="drugSearch" type="text"
+                    placeholder="Search drugs by name or DrugBank ID..." autocomplete="off">
                 <div class="search-results" id="searchResults"></div>
             </div>
         </div>
 
-        <!-- Combination Analysis Section -->
-        <div class="search-section">
-            <div class="combo-toggle">
-                <button class="active" onclick="setMode('single')">Single Drug</button>
-                <button onclick="setMode('combo')">Drug Combination</button>
+        <!-- Novel SMILES Prediction -->
+        <div id="modeSmiles" class="hidden">
+            <div class="search-bar">
+                <span class="search-icon">🧪</span>
+                <input class="search-input" id="smilesInput" type="text"
+                    placeholder="Enter SMILES string (e.g., CC(=O)OC1=CC=CC=C1C(=O)O)..." autocomplete="off">
+            </div>
+            
+            <div class="target-selection">
+                <h3 style="margin: 1.5rem 0 0.5rem; font-size: 1rem; color: var(--text);">1. Known Targets (Proteins)</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Inject relational context into the graph model.
+                </p>
+                <div class="search-bar" style="margin-bottom: 1rem; max-width: 500px;">
+                    <span class="search-icon">🧬</span>
+                    <input class="search-input" id="targetSearch" type="text"
+                        placeholder="Search proteins by name (e.g., Prostaglandin)..." autocomplete="off">
+                    <div class="search-results" id="targetSearchResults"></div>
+                </div>
+                <div id="selectedTargets" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;">
+                    <!-- Selected targets will appear here as pills -->
+                </div>
+
+                <h3 style="margin: 1.5rem 0 0.5rem; font-size: 1rem; color: var(--text);">2. Known Drug Interactions</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Does this novel compound interact with any existing drugs?
+                </p>
+                <div class="search-bar" style="margin-bottom: 1rem; max-width: 500px;">
+                    <span class="search-icon">💊</span>
+                    <input class="search-input" id="ddiSearch" type="text"
+                        placeholder="Search interacting drugs by name..." autocomplete="off">
+                    <div class="search-results" id="ddiSearchResults"></div>
+                </div>
+                <div id="selectedDDI" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;"></div>
+
+                <h3 style="margin: 1.5rem 0 0.5rem; font-size: 1rem; color: var(--text);">3. Associated Biomarkers</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Are there any known biological markers associated with this compound?
+                </p>
+                <div class="search-bar" style="margin-bottom: 1rem; max-width: 500px;">
+                    <span class="search-icon">🔬</span>
+                    <input class="search-input" id="bioSearch" type="text"
+                        placeholder="Search biomarkers by gene or protein..." autocomplete="off">
+                    <div class="search-results" id="bioSearchResults"></div>
+                </div>
+                <div id="selectedBio" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;"></div>
             </div>
 
-            <div class="combo-inputs" id="comboInputs">
-                <div class="combo-drug-row">
-                    <label>Drug 1</label>
-                    <div class="search-wrapper combo-search-wrapper">
-                        <input type="text" class="search-input" id="comboDrug1" placeholder="e.g., Aspirin"
-                            autocomplete="off">
-                        <div class="search-results" id="searchResults1"></div>
-                    </div>
-                </div>
-                <div class="combo-drug-row">
-                    <label>Drug 2</label>
-                    <div class="search-wrapper combo-search-wrapper">
-                        <input type="text" class="search-input" id="comboDrug2" placeholder="e.g., Warfarin"
-                            autocomplete="off">
-                        <div class="search-results" id="searchResults2"></div>
-                    </div>
-                </div>
-                <div class="combo-drug-row">
-                    <label>Drug 3</label>
-                    <div class="search-wrapper combo-search-wrapper">
-                        <input type="text" class="search-input" id="comboDrug3" placeholder="(optional)"
-                            autocomplete="off">
-                        <div class="search-results" id="searchResults3"></div>
-                    </div>
-                </div>
-                <button class="combo-analyze-btn" onclick="analyzeCombination()">&#128300; Analyze Combination</button>
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="analyze-btn" onclick="predictSmiles()">Analyze SMILES & Targets</button>
             </div>
         </div>
 
-        <!-- Combination Results -->
-        <div class="analysis-panel" id="comboPanel"></div>
-
-        <!-- Welcome -->
-        <div class="welcome" id="welcomePanel">
-            <h2>Drug Safety Intelligence</h2>
-            <p>Search for any drug to get AI-powered predictions for side effects and biomarker interactions using our
-                Heterogeneous Graph Transformer model.</p>
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">&#9889;</div>
-                    <h3>Side-Effect Prediction</h3>
-                    <p>Multi-label prediction across 100 side effects with calibrated confidence scores</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">&#129516;</div>
-                    <h3>Biomarker Analysis</h3>
-                    <p>Predict whether genetic variants cause adverse or efficacy responses</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">&#128200;</div>
-                    <h3>Graph Intelligence</h3>
-                    <p>Powered by HGT with 2.4M drug interactions and 30K protein targets</p>
+        <!-- Combination Input -->
+        <div id="modeCombo" class="hidden">
+            <div class="combo-inputs">
+                <div class="combo-row">
+                    <input class="combo-input" id="comboDrug1" placeholder="Drug 1 name">
+                    <input class="combo-input" id="comboDrug2" placeholder="Drug 2 name">
+                    <input class="combo-input" id="comboDrug3" placeholder="Drug 3 (optional)">
+                    <button class="btn btn-primary" onclick="predictCombination()">Analyze</button>
                 </div>
             </div>
         </div>
@@ -1134,525 +545,945 @@
         <!-- Loading -->
         <div class="loading" id="loadingPanel">
             <div class="spinner"></div>
-            <p>Analyzing drug interactions...</p>
+            <div style="color:var(--text-muted); font-size:0.85rem;">Analyzing...</div>
+        </div>
+
+        <!-- Welcome -->
+        <div id="welcomePanel">
+            <div class="welcome">
+                <h2>AI Drug Safety Intelligence</h2>
+                <p>Search for a known drug, enter a novel SMILES compound, or analyze a drug combination to get predictions.</p>
+            </div>
         </div>
 
         <!-- Analysis Results -->
-        <div class="analysis-panel" id="analysisPanel">
-            <div class="drug-header">
-                <div>
-                    <div class="drug-name" id="drugName"></div>
-                    <div class="drug-id" id="drugId"></div>
-                    <div class="drug-smiles" id="drugSmiles"></div>
+        <div id="analysisPanel" class="hidden">
+
+            <!-- Drug Header -->
+            <div class="card drug-header-card" id="drugHeaderCard">
+                <div class="drug-info">
+                    <h2 id="drugName">—</h2>
+                    <div class="drug-meta" id="drugId">—</div>
+                    <div class="drug-smiles" id="drugSmiles">—</div>
                 </div>
             </div>
 
-            <div class="results-grid">
-                <div class="results-card">
-                    <div class="section-title">
-                        <span class="icon">&#9888;&#65039;</span> Predicted Side Effects
+            <!-- Side Effects + Biomarkers -->
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="icon">⚠️</span> Predicted Side Effects</div>
+                    <div class="chart-toggle">
+                        <button class="active" onclick="toggleView('se','table',this)">Table</button>
+                        <button onclick="toggleView('se','chart',this)">Chart</button>
                     </div>
-                    <div class="se-list" id="seList"></div>
+                    <div id="seTableView" class="table-scroll">
+                        <table class="data-table">
+                            <thead><tr>
+                                <th>Side Effect</th><th>Prob</th><th></th><th>Risk</th><th>Onset</th>
+                            </tr></thead>
+                            <tbody id="seTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="seChartView" class="chart-container hidden">
+                        <canvas id="seChart"></canvas>
+                    </div>
                 </div>
-                <div class="results-card">
-                    <div class="section-title">
-                        <span class="icon">&#129516;</span> Biomarker Interactions
+                <div class="card">
+                    <div class="card-title"><span class="icon">🧬</span> Biomarker Interactions</div>
+                    <div class="chart-toggle">
+                        <button class="active" onclick="toggleView('bio','table',this)">Table</button>
+                        <button onclick="toggleView('bio','chart',this)">Chart</button>
                     </div>
-                    <div class="bio-list" id="bioList"></div>
+                    <div id="bioTableView" class="table-scroll">
+                        <table class="data-table">
+                            <thead><tr>
+                                <th>Gene</th><th>Change</th><th>Prediction</th><th>Confidence</th>
+                            </tr></thead>
+                            <tbody id="bioTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="bioChartView" class="chart-container hidden">
+                        <canvas id="bioChart"></canvas>
+                    </div>
                 </div>
             </div>
 
-            <!-- XAI Explanation Card -->
-            <div class="results-card" style="margin-bottom: 2rem;">
-                <div class="section-title">
-                    <span class="icon">&#129504;</span> Model Explanation (XAI)
+            <!-- XAI + Counterfactual -->
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"><span class="icon">🧠</span> XAI Explanations</div>
+                    <div class="chart-toggle">
+                        <button class="active" onclick="toggleView('xai','table',this)">Table</button>
+                        <button onclick="toggleView('xai','chart',this)">Chart</button>
+                    </div>
+                    <div id="xaiTableView" class="table-scroll">
+                        <table class="data-table">
+                            <thead><tr>
+                                <th>Type</th><th>Name</th><th>Attention</th><th></th><th></th>
+                            </tr></thead>
+                            <tbody id="xaiTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div id="xaiChartView" class="chart-container hidden">
+                        <canvas id="xaiChart"></canvas>
+                    </div>
                 </div>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Top graph neighbors that
-                    influenced this prediction, ranked by HGT attention weight.</p>
-                <div class="explanation-list" id="expList"></div>
+                <div class="card" id="cfCard">
+                    <div class="card-title"><span class="icon">🔬</span> Counterfactual Analysis</div>
+                    <div style="color:var(--text-muted); font-size:0.8rem; margin-bottom:0.5rem;">
+                        Click "Simulate" on a protein target above to see what happens if that interaction is removed.
+                    </div>
+                    <div id="cfResultsInline"></div>
+                    <div id="cfChartView" class="chart-container hidden">
+                        <canvas id="cfChart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Counterfactual Modal -->
-        <div class="cf-modal" id="cfModal">
-            <div class="cf-modal-content">
-                <span class="cf-close" onclick="closeCfModal()">&times;</span>
-                <div class="section-title">
-                    <span class="icon">&#128300;</span> Counterfactual Simulation
+        <!-- Combination Results Panel -->
+        <div id="comboResultsPanel" class="hidden">
+            <div class="card drug-header-card">
+                <div class="drug-info">
+                    <h2 id="comboDrugsTitle">—</h2>
+                    <div class="drug-meta" id="comboSummary">—</div>
                 </div>
-                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;" id="cfModalDesc"></p>
+            </div>
 
-                <div id="cfLoading" style="display:none; text-align:center; padding: 2rem;">
-                    <div class="spinner" style="width: 24px; height: 24px; margin: 0 auto 1rem;"></div>
-                    <p>Simulating alternative graph topology...</p>
+            <!-- DDI Alerts -->
+            <div id="ddiAlerts"></div>
+
+            <!-- Combo Side Effects -->
+            <div class="card grid-full">
+                <div class="card-title"><span class="icon">⚠️</span> Combined Side Effects (with Synergy)</div>
+                <div class="chart-toggle">
+                    <button class="active" onclick="toggleView('combo','table',this)">Table</button>
+                    <button onclick="toggleView('combo','chart',this)">Chart</button>
                 </div>
-
-                <div id="cfResultsList"></div>
+                <div id="comboTableView" class="table-scroll">
+                    <table class="data-table">
+                        <thead><tr>
+                            <th>Side Effect</th><th>Combined Prob</th><th></th><th>Risk</th><th>Synergy</th><th>Amplified</th><th>Onset</th>
+                        </tr></thead>
+                        <tbody id="comboSETableBody"></tbody>
+                    </table>
+                </div>
+                <div id="comboChartView" class="chart-container hidden">
+                    <canvas id="comboChart"></canvas>
+                </div>
             </div>
         </div>
     </main>
 
+    <!-- Counterfactual Modal (fallback) -->
+    <div class="cf-modal" id="cfModal">
+        <div class="cf-modal-content">
+            <button class="cf-close" onclick="closeCfModal()">✕</button>
+            <h3 style="font-size:1rem; margin-bottom:1rem;">Counterfactual Results</h3>
+            <div id="cfModalBody"></div>
+        </div>
+    </div>
+
     <script>
-        const API = '';
-        let debounceTimer;
+    /* ──────────────────────────────────────────────────── */
+    /*  MedWatchPro Dashboard JS                           */
+    /* ──────────────────────────────────────────────────── */
 
-        // ── Load Stats ──────────────────────────────
-        async function loadStats() {
-            try {
-                const res = await fetch(`${API}/api/stats`);
-                const data = await res.json();
-                document.getElementById('statDrugs').textContent = data.num_drugs.toLocaleString();
-                document.getElementById('statProteins').textContent = data.num_proteins.toLocaleString();
-                document.getElementById('statSE').textContent = data.num_side_effects;
-                document.getElementById('statAUC').textContent = data.model_auc.toFixed(3);
-                document.getElementById('modelBadge').textContent =
-                    `HGT Model: AUC ${data.model_auc.toFixed(3)} | Epoch ${data.best_epoch}`;
-            } catch (e) {
-                console.error('Stats error:', e);
-            }
+    let currentDrugName = '';
+    // Chart instances (destroy before re-creating)
+    let chartInstances = { se: null, bio: null, xai: null, cf: null, combo: null };
+
+    const chartColors = {
+        red: 'rgba(239, 68, 68, 0.75)',
+        redBg: 'rgba(239, 68, 68, 0.12)',
+        amber: 'rgba(245, 158, 11, 0.75)',
+        amberBg: 'rgba(245, 158, 11, 0.12)',
+        green: 'rgba(16, 185, 129, 0.75)',
+        greenBg: 'rgba(16, 185, 129, 0.12)',
+        teal: 'rgba(0, 137, 123, 0.75)',
+        tealBg: 'rgba(0, 137, 123, 0.12)',
+        blue: 'rgba(14, 165, 233, 0.75)',
+        blueBg: 'rgba(14, 165, 233, 0.12)',
+        purple: 'rgba(139, 92, 246, 0.75)',
+        purpleBg: 'rgba(139, 92, 246, 0.12)',
+    };
+
+    const chartFont = { family: '"Fjalla One", sans-serif', size: 11 };
+    const chartDefaults = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { labels: { font: chartFont, color: '#004d40' } },
+            tooltip: { titleFont: chartFont, bodyFont: chartFont }
+        }
+    };
+
+    /* ── Toggle Table/Chart View ── */
+    function toggleView(section, view, btn) {
+        const tableEl = document.getElementById(section + 'TableView');
+        const chartEl = document.getElementById(section + 'ChartView');
+        if (tableEl) tableEl.classList.toggle('hidden', view === 'chart');
+        if (chartEl) chartEl.classList.toggle('hidden', view === 'table');
+        // Update buttons
+        btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+    let currentNodeIdx = null;
+
+    // ── Init ──
+    window.addEventListener('DOMContentLoaded', () => {
+        fetchStats();
+        const searchInput = document.getElementById('drugSearch');
+        let debounce;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounce);
+            debounce = setTimeout(() => searchDrugs(searchInput.value), 250);
+        });
+        searchInput.addEventListener('focus', () => {
+            if (document.getElementById('searchResults').children.length > 0)
+                document.getElementById('searchResults').classList.add('active');
+        });
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-bar'))
+                document.getElementById('searchResults').classList.remove('active');
+        });
+    });
+
+    // ── Stats ──
+    async function fetchStats() {
+        try {
+            const res = await fetch('/api/stats');
+            const d = await res.json();
+            document.getElementById('statDrugs').textContent = d.num_drugs?.toLocaleString() || '—';
+            document.getElementById('statProteins').textContent = d.num_proteins?.toLocaleString() || '—';
+            document.getElementById('statBiomarkers').textContent = d.num_biomarkers || '—';
+            document.getElementById('statSE').textContent = d.num_side_effects || '—';
+            document.getElementById('statAUC').textContent = d.model_auc ? d.model_auc.toFixed(3) : '—';
+            document.getElementById('statBioAcc').textContent = d.model_bio_acc ? (d.model_bio_acc * 100).toFixed(1) + '%' : '—';
+            document.getElementById('aucBadge').textContent = 'AUC ' + (d.model_auc ? d.model_auc.toFixed(3) : '—');
+        } catch (e) { console.error('Stats error:', e); }
+    }
+
+    // ── Mode Switch ──
+    function switchMode(mode) {
+        document.querySelectorAll('.mode-tab').forEach((t, i) => {
+            t.classList.toggle('active', ['known','smiles','combo'][i] === mode);
+        });
+        document.getElementById('modeKnown').classList.toggle('hidden', mode !== 'known');
+        document.getElementById('modeSmiles').classList.toggle('hidden', mode !== 'smiles');
+        document.getElementById('modeCombo').classList.toggle('hidden', mode !== 'combo');
+        document.getElementById('analysisPanel').classList.add('hidden');
+        document.getElementById('comboResultsPanel').classList.add('hidden');
+        document.getElementById('welcomePanel').classList.remove('hidden');
+        // Clear selected targets when switching modes
+        if (mode !== 'smiles') {
+            selectedProteins = [];
+            renderSelectedTargets();
+            document.getElementById('smilesInput').value = '';
+            document.getElementById('targetSearch').value = '';
+            document.getElementById('targetSearchResults').classList.remove('active');
+        }
+    }
+
+    function switchNav() {}
+
+    // ── Search ──
+    async function searchDrugs(query) {
+        if (query.length < 2) { document.getElementById('searchResults').classList.remove('active'); return; }
+        try {
+            const res = await fetch('/api/search', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({query, limit: 10})
+            });
+            const d = await res.json();
+            const container = document.getElementById('searchResults');
+            container.innerHTML = '';
+            d.results.forEach(r => {
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `<div class="result-name">${r.name}</div><div class="result-id">${r.drug_id}</div>`;
+                div.onclick = () => { selectDrug(r.name); container.classList.remove('active'); };
+                container.appendChild(div);
+            });
+            container.classList.toggle('active', d.results.length > 0);
+        } catch (e) { console.error('Search error:', e); }
+    }
+
+    function selectDrug(name) {
+        document.getElementById('drugSearch').value = name;
+        showLoading();
+        predictDrug(name);
+    }
+
+    function showLoading() {
+        document.getElementById('loadingPanel').classList.add('active');
+        document.getElementById('welcomePanel').classList.add('hidden');
+        document.getElementById('analysisPanel').classList.add('hidden');
+        document.getElementById('comboResultsPanel').classList.add('hidden');
+    }
+    function hideLoading() { document.getElementById('loadingPanel').classList.remove('active'); }
+
+    // ── Predict Known Drug ──
+    async function predictDrug(name) {
+        try {
+            const res = await fetch('/api/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({drug_name: name, top_k: 20, threshold: 0.1})
+            });
+            if (!res.ok) throw new Error('Drug not found');
+            const d = await res.json();
+            currentDrugName = d.drug.name;
+            renderResults(d);
+        } catch (e) {
+            hideLoading();
+            alert('Error: ' + e.message);
+        }
+    }
+
+    // ── TARGET PROTEIN SELECTION LOGIC ── //
+    let targetSearchTimeout;
+    const targetSearchInput = document.getElementById('targetSearch');
+    const targetResultsDiv = document.getElementById('targetSearchResults');
+    const selectedTargetsContainer = document.getElementById('selectedTargets');
+    let selectedProteins = []; // Array of objects { id: node_idx, name: string }
+
+    targetSearchInput.addEventListener('input', (e) => {
+        clearTimeout(targetSearchTimeout);
+        const query = e.target.value.trim();
+
+        if (query.length < 1) {
+            targetResultsDiv.classList.remove('active');
+            return;
         }
 
-        // ── Search & Autocomplete ──────────────────────────────────
-        function setupAutocomplete(inputId, resultsId, onSelectCallback) {
-            const inputEl = document.getElementById(inputId);
-            const resultsEl = document.getElementById(resultsId);
-            let debounceTimer;
+        targetSearchTimeout = setTimeout(async () => {
+            targetResultsDiv.innerHTML = '<div class="search-item">Searching proteins...</div>';
+            targetResultsDiv.classList.add('active');
 
-            inputEl.addEventListener('input', () => {
-                clearTimeout(debounceTimer);
-                const q = inputEl.value.trim();
-                if (q.length < 2) { resultsEl.classList.remove('active'); return; }
-                debounceTimer = setTimeout(() => fetchSearchSuggestions(q, resultsEl, onSelectCallback), 200);
-            });
-
-            inputEl.addEventListener('blur', () => {
-                setTimeout(() => resultsEl.classList.remove('active'), 200);
-            });
-        }
-
-        async function fetchSearchSuggestions(query, resultsEl, onSelectCallback) {
             try {
-                const res = await fetch(`${API}/api/search`, {
+                const res = await fetch('/api/search_proteins', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query, limit: 8 })
+                    body: JSON.stringify({ query, limit: 10 })
                 });
                 const data = await res.json();
-                if (data.results.length > 0) {
-                    // Create unattached elements to avoid breaking HTML strings with quotes
-                    resultsEl.innerHTML = '';
-                    data.results.forEach(d => {
-                        const item = document.createElement('div');
-                        item.className = 'search-result-item';
-                        item.onmousedown = () => onSelectCallback(d.name, d.drug_id);
-
-                        const nameDiv = document.createElement('div');
-                        nameDiv.className = 'result-name';
-                        nameDiv.textContent = d.name;
-
-                        const idDiv = document.createElement('div');
-                        idDiv.className = 'result-id';
-                        idDiv.textContent = d.drug_id;
-
-                        item.appendChild(nameDiv);
-                        item.appendChild(idDiv);
-                        resultsEl.appendChild(item);
-                    });
-                    resultsEl.classList.add('active');
+                
+                targetResultsDiv.innerHTML = '';
+                if (data.results.length === 0) {
+                    targetResultsDiv.innerHTML = '<div class="search-item">No proteins found</div>';
                 } else {
-                    // Provide option to analyze as SMILES if it looks vaguely like one
-                    if (query.match(/[CNOcno\(\)\[\]\=\#]/) && query.length > 4) {
-                        resultsEl.innerHTML = `
-                            <div class="search-result-item" onmousedown="analyzeDrug('${query.replace(/'/g, "\\'")}', true)">
-                                <div class="result-name">Analyze as novel SMILES string:</div>
-                                <div class="result-id" style="color: var(--accent-blue)">${query}</div>
-                            </div>
+                    data.results.forEach(target => {
+                        const div = document.createElement('div');
+                        div.className = 'search-result-item';
+                        div.innerHTML = `
+                            <div class="result-name">${target.name}</div>
+                            <div class="result-id" style="font-size:0.8rem; color:var(--text-muted)">UniProt: ${target.protein_id}</div>
                         `;
-                    } else {
-                        searchResults.innerHTML = '<div class="search-result-item"><div class="result-name" style="color:var(--text-muted)">No drugs found</div></div>';
+                        div.onclick = () => {
+                            selectTargetProtein(target.node_idx, target.name);
+                            targetSearchInput.value = '';
+                            targetResultsDiv.classList.remove('active');
+                        };
+                        targetResultsDiv.appendChild(div);
+                    });
+                }
+            } catch (e) {
+                targetResultsDiv.innerHTML = '<div class="search-result-item" style="color:var(--accent-red)">Error searching targets</div>';
+            }
+        }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!targetSearchInput.contains(e.target) && !targetResultsDiv.contains(e.target)) {
+            targetResultsDiv.classList.remove('active');
+        }
+    });
+
+    function selectTargetProtein(nodeIdx, name) {
+        if (selectedProteins.some(p => p.id === nodeIdx)) return;
+        selectedProteins.push({ id: nodeIdx, name: name });
+        renderSelectedTargets();
+    }
+    function removeTargetProtein(nodeIdx) {
+        selectedProteins = selectedProteins.filter(p => p.id !== nodeIdx);
+        renderSelectedTargets();
+    }
+    function renderSelectedTargets() {
+        selectedTargetsContainer.innerHTML = '';
+        selectedProteins.forEach(target => {
+            const pill = document.createElement('div');
+            pill.className = 'selection-pill';
+            pill.innerHTML = `<span>${target.name}</span><button onclick="removeTargetProtein(${target.id})">×</button>`;
+            selectedTargetsContainer.appendChild(pill);
+        });
+    }
+
+    // ── DDI SELECTION LOGIC ── //
+    let ddiSearchTimeout;
+    const ddiSearchInput = document.getElementById('ddiSearch');
+    const ddiResultsDiv = document.getElementById('ddiSearchResults');
+    const selectedDDIContainer = document.getElementById('selectedDDI');
+    let selectedDDI = []; 
+
+    ddiSearchInput.addEventListener('input', (e) => {
+        clearTimeout(ddiSearchTimeout);
+        const query = e.target.value.trim();
+        if (query.length < 2) { ddiResultsDiv.classList.remove('active'); return; }
+
+        ddiSearchTimeout = setTimeout(async () => {
+            ddiResultsDiv.innerHTML = '<div class="search-item">Searching drugs...</div>';
+            ddiResultsDiv.classList.add('active');
+            try {
+                const res = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, limit: 10 })
+                });
+                const data = await res.json();
+                ddiResultsDiv.innerHTML = '';
+                if (data.results.length === 0) { ddiResultsDiv.innerHTML = '<div class="search-item">No drugs found</div>'; } 
+                else {
+                    data.results.forEach(target => {
+                        const div = document.createElement('div');
+                        div.className = 'search-result-item';
+                        div.innerHTML = `<div class="result-name">${target.name}</div>`;
+                        div.onclick = () => { selectDDI(target.node_idx, target.name); ddiSearchInput.value = ''; ddiResultsDiv.classList.remove('active'); };
+                        ddiResultsDiv.appendChild(div);
+                    });
+                }
+            } catch (e) { ddiResultsDiv.innerHTML = '<div class="search-result-item" style="color:var(--accent-red)">Error</div>'; }
+        }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!ddiSearchInput.contains(e.target) && !ddiResultsDiv.contains(e.target)) ddiResultsDiv.classList.remove('active');
+    });
+
+    function selectDDI(nodeIdx, name) {
+        if (selectedDDI.some(p => p.id === nodeIdx)) return;
+        selectedDDI.push({ id: nodeIdx, name: name });
+        renderSelectedDDI();
+    }
+    function removeDDI(nodeIdx) { selectedDDI = selectedDDI.filter(p => p.id !== nodeIdx); renderSelectedDDI(); }
+    function renderSelectedDDI() {
+        selectedDDIContainer.innerHTML = '';
+        selectedDDI.forEach(target => {
+            const pill = document.createElement('div'); pill.className = 'selection-pill ddi-pill';
+            pill.innerHTML = `<span>${target.name}</span><button onclick="removeDDI(${target.id})">×</button>`;
+            selectedDDIContainer.appendChild(pill);
+        });
+    }
+
+    // ── BIOMARKER SELECTION LOGIC ── //
+    let bioSearchTimeout;
+    const bioSearchInput = document.getElementById('bioSearch');
+    const bioResultsDiv = document.getElementById('bioSearchResults');
+    const selectedBioContainer = document.getElementById('selectedBio');
+    let selectedBio = []; 
+
+    bioSearchInput.addEventListener('input', (e) => {
+        clearTimeout(bioSearchTimeout);
+        const query = e.target.value.trim();
+        if (query.length < 1) { bioResultsDiv.classList.remove('active'); return; }
+
+        bioSearchTimeout = setTimeout(async () => {
+            bioResultsDiv.innerHTML = '<div class="search-item">Searching biomarkers...</div>';
+            bioResultsDiv.classList.add('active');
+            try {
+                const res = await fetch('/api/search_biomarkers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query, limit: 10 })
+                });
+                const data = await res.json();
+                bioResultsDiv.innerHTML = '';
+                if (data.results.length === 0) { bioResultsDiv.innerHTML = '<div class="search-item">No biomarkers found</div>'; } 
+                else {
+                    data.results.forEach(target => {
+                        const div = document.createElement('div');
+                        div.className = 'search-result-item';
+                        div.innerHTML = `<div class="result-name">${target.gene} | ${target.protein}</div>`;
+                        div.onclick = () => { selectBio(target.node_idx, target.gene || target.protein); bioSearchInput.value = ''; bioResultsDiv.classList.remove('active'); };
+                        bioResultsDiv.appendChild(div);
+                    });
+                }
+            } catch (e) { bioResultsDiv.innerHTML = '<div class="search-result-item" style="color:var(--accent-red)">Error</div>'; }
+        }, 300);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!bioSearchInput.contains(e.target) && !bioResultsDiv.contains(e.target)) bioResultsDiv.classList.remove('active');
+    });
+
+    function selectBio(nodeIdx, name) {
+        if (selectedBio.some(p => p.id === nodeIdx)) return;
+        selectedBio.push({ id: nodeIdx, name: name });
+        renderSelectedBio();
+    }
+    function removeBio(nodeIdx) { selectedBio = selectedBio.filter(p => p.id !== nodeIdx); renderSelectedBio(); }
+    function renderSelectedBio() {
+        selectedBioContainer.innerHTML = '';
+        selectedBio.forEach(target => {
+            const pill = document.createElement('div'); pill.className = 'selection-pill bio-pill';
+            pill.innerHTML = `<span>${target.name}</span><button onclick="removeBio(${target.id})">×</button>`;
+            selectedBioContainer.appendChild(pill);
+        });
+    }
+
+
+    // ── API CALLS ── //
+
+    // Helper function to handle API calls and rendering
+    async function runPrediction(endpoint, body) {
+        showLoading();
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.detail || 'Prediction failed');
+            }
+            const d = await res.json();
+            currentDrugName = d.drug.name;
+            renderResults(d);
+        } catch (e) {
+            hideLoading();
+            alert('Error: ' + e.message);
+        }
+    }
+
+    // ── Predict SMILES ──
+    async function predictSmiles() {
+        const smiles = document.getElementById('smilesInput').value.trim();
+        const smilesNameEl = document.getElementById('smilesName');
+        const name = smilesNameEl ? smilesNameEl.value.trim() : 'Novel Compound';
+        
+        if (!smiles) return alert('Please enter a SMILES string');
+
+        const targets = selectedProteins.map(p => p.id);
+        const ddis = selectedDDI.map(d => d.id);
+        const bios = selectedBio.map(b => b.id);
+
+        showLoading();
+        try {
+            const res = await fetch('/api/predict_smiles', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    smiles, 
+                    drug_name: name, 
+                    target_proteins: targets,
+                    interacting_drugs: ddis,
+                    associated_biomarkers: bios,
+                    top_k: 20, 
+                    threshold: 0.1
+                })
+            });
+            if (!res.ok) throw new Error('Prediction failed');
+            const d = await res.json();
+            currentDrugName = d.drug.name;
+            renderResults(d);
+        } catch (e) { hideLoading(); alert('Error: ' + e.message); }
+    }
+
+    // ── Predict Combination ──
+    async function predictCombination() {
+        const d1 = document.getElementById('comboDrug1').value.trim();
+        const d2 = document.getElementById('comboDrug2').value.trim();
+        const d3 = document.getElementById('comboDrug3').value.trim();
+        if (!d1 || !d2) return alert('Enter at least 2 drug names');
+        const names = [d1, d2];
+        if (d3) names.push(d3);
+        showLoading();
+        try {
+            const res = await fetch('/api/predict_combination', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({drug_names: names, top_k: 20, threshold: 0.05})
+            });
+            if (!res.ok) throw new Error('Combination analysis failed');
+            const d = await res.json();
+            renderComboResults(d);
+        } catch (e) { hideLoading(); alert('Error: ' + e.message); }
+    }
+
+    // ── Render Single/SMILES Results ──
+    function renderResults(d) {
+        hideLoading();
+        document.getElementById('welcomePanel').classList.add('hidden');
+        document.getElementById('comboResultsPanel').classList.add('hidden');
+        document.getElementById('analysisPanel').classList.remove('hidden');
+
+        document.getElementById('drugName').textContent = d.drug.name;
+        document.getElementById('drugId').textContent = d.drug.id;
+        document.getElementById('drugSmiles').textContent = d.drug.smiles || '—';
+
+        // Side Effects
+        const seBody = document.getElementById('seTableBody');
+        seBody.innerHTML = '';
+        if (d.side_effects.length === 0) {
+            seBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">No side effects above threshold</td></tr>';
+        }
+        d.side_effects.forEach(se => {
+            const pct = (se.probability * 100).toFixed(1);
+            const cls = se.risk_level;
+            seBody.innerHTML += `<tr>
+                <td style="text-transform:capitalize">${se.name}</td>
+                <td>${pct}%</td>
+                <td><div class="prob-bar-wrap"><div class="prob-bar ${cls}" style="width:${pct}%"></div></div></td>
+                <td><span class="badge badge-${cls}">${cls}</span></td>
+                <td style="font-size:0.7rem; color:var(--text-muted)">${se.onset_label || '—'}</td>
+            </tr>`;
+        });
+
+        // Biomarkers
+        const bioBody = document.getElementById('bioTableBody');
+        bioBody.innerHTML = '';
+        if (d.biomarkers.length === 0) {
+            bioBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted)">No biomarker interactions found</td></tr>';
+        }
+        d.biomarkers.forEach(b => {
+            const cls = b.prediction;
+            bioBody.innerHTML += `<tr>
+                <td style="color:var(--accent)">${b.gene}</td>
+                <td style="font-size:0.75rem">${b.change}</td>
+                <td><span class="badge badge-${cls}">${cls}</span></td>
+                <td>${(b.confidence * 100).toFixed(1)}%</td>
+            </tr>`;
+        });
+
+        // XAI Explanations
+        const xaiBody = document.getElementById('xaiTableBody');
+        xaiBody.innerHTML = '';
+        if (!d.explanations || d.explanations.length === 0) {
+            xaiBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">No explanations available</td></tr>';
+        } else {
+            d.explanations.forEach(ex => {
+                const typeCls = ex.type === 'protein' ? 'badge-efficacy' : ex.type === 'drug' ? 'badge-other' : 'badge-medium';
+                const pct = (ex.attention * 100).toFixed(0);
+                const simBtn = ex.type === 'protein'
+                    ? `<button class="btn btn-sm btn-outline" onclick="runCounterfactual(${ex.node_idx})">Simulate</button>`
+                    : '';
+                xaiBody.innerHTML += `<tr>
+                    <td><span class="badge ${typeCls}">${ex.type}</span></td>
+                    <td>${ex.name}</td>
+                    <td><div class="attn-bar-wrap"><div class="attn-bar" style="width:${pct}%"></div></div></td>
+                    <td style="font-size:0.75rem; color:var(--accent)">${pct}%</td>
+                    <td>${simBtn}</td>
+                </tr>`;
+            });
+        }
+
+        // Clear previous counterfactual
+        document.getElementById('cfResultsInline').innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:1rem;">No simulation run yet</div>';
+        document.getElementById('cfChartView').classList.add('hidden');
+        if (chartInstances.cf) { chartInstances.cf.destroy(); chartInstances.cf = null; }
+
+        // ── Build Charts ──
+        buildSEChart(d.side_effects);
+        buildBioChart(d.biomarkers);
+        buildXAIChart(d.explanations || []);
+    }
+
+    /* ═══════════ CHART BUILDERS ═══════════ */
+
+    function buildSEChart(sideEffects) {
+        if (chartInstances.se) chartInstances.se.destroy();
+        const ctx = document.getElementById('seChart').getContext('2d');
+        const labels = sideEffects.map(se => se.name.charAt(0).toUpperCase() + se.name.slice(1));
+        const data = sideEffects.map(se => (se.probability * 100).toFixed(1));
+        const bgColors = sideEffects.map(se => {
+            if (se.risk_level === 'high') return chartColors.red;
+            if (se.risk_level === 'medium') return chartColors.amber;
+            return chartColors.green;
+        });
+        const borderColors = bgColors.map(c => c.replace('0.75', '1'));
+        chartInstances.se = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Probability (%)',
+                    data,
+                    backgroundColor: bgColors,
+                    borderColor: borderColors,
+                    borderWidth: 1,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                ...chartDefaults,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true, max: 100,
+                        ticks: { font: chartFont, color: '#004d40', callback: v => v + '%' },
+                        grid: { color: 'rgba(0,150,136,0.06)' }
+                    },
+                    y: {
+                        ticks: { font: { ...chartFont, size: 10 }, color: '#004d40' },
+                        grid: { display: false }
                     }
-                    searchResults.classList.add('active');
-                }
-            } catch (e) { console.error('Search error:', e); }
-        }
-
-        // ── Analyze Drug ────────────────────────────
-        async function analyzeDrug(name, isSmiles = false) {
-            searchResults.classList.remove('active');
-            searchInput.value = name;
-            document.getElementById('welcomePanel').style.display = 'none';
-            document.getElementById('analysisPanel').classList.remove('active');
-            document.getElementById('loadingPanel').classList.add('active');
-
-            try {
-                let res;
-                if (isSmiles) {
-                    res = await fetch(`${API}/api/predict_smiles`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ smiles: name, top_k: 25, threshold: 0.1 })
-                    });
-                } else {
-                    res = await fetch(`${API}/api/predict`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ drug_name: name, top_k: 25, threshold: 0.1 })
-                    });
-                }
-
-                if (!res.ok) {
-                    const errObj = await res.json();
-                    throw new Error(errObj.detail || 'Prediction failed');
-                }
-                const data = await res.json();
-                renderResults(data);
-            } catch (e) {
-                alert('Error: ' + e.message);
-                document.getElementById('loadingPanel').classList.remove('active');
-                document.getElementById('welcomePanel').style.display = 'block';
-            }
-        }
-
-        // ── Render Results ──────────────────────────
-        function renderResults(data) {
-            document.getElementById('loadingPanel').classList.remove('active');
-            document.getElementById('analysisPanel').classList.add('active');
-
-            document.getElementById('drugName').textContent = data.drug.name;
-            document.getElementById('drugId').textContent = data.drug.id;
-            document.getElementById('drugSmiles').textContent = `SMILES: ${data.drug.smiles}`;
-
-            // Side Effects
-            const seList = document.getElementById('seList');
-            if (data.side_effects.length === 0) {
-                seList.innerHTML = '<div class="empty-state">No significant side effects predicted above threshold</div>';
-            } else {
-                seList.innerHTML = data.side_effects.map(se => {
-                    const onsetBadge = se.onset_category && se.onset_category !== 'unknown'
-                        ? `<span class="onset-badge ${se.onset_category}">${se.onset_label}</span>`
-                        : '';
-                    return `
-                    <div class="se-item">
-                        <span class="se-name">${se.name}${onsetBadge}</span>
-                        <div class="se-bar-container">
-                            <div class="se-bar ${se.risk_level}" style="width:${se.probability * 100}%"></div>
-                        </div>
-                        <span class="se-prob ${se.risk_level}">${(se.probability * 100).toFixed(1)}%</span>
-                        <span class="risk-badge ${se.risk_level}">${se.risk_level}</span>
-                    </div>
-                    `;
-                }).join('');
-            }
-
-            // Biomarkers
-            const bioList = document.getElementById('bioList');
-            if (data.biomarkers.length === 0) {
-                bioList.innerHTML = '<div class="empty-state">No biomarker interactions found for this drug</div>';
-            } else {
-                bioList.innerHTML = data.biomarkers.map(b => `
-                    <div class="bio-item">
-                        <div class="bio-gene">${b.gene}</div>
-                        <div class="bio-change">Variant: ${b.change}</div>
-                        <div class="bio-protein">Protein: ${b.protein}</div>
-                        <div>
-                            <span class="bio-prediction ${b.prediction}">${b.prediction.toUpperCase()}</span>
-                            <span class="bio-conf">Confidence: ${(b.confidence * 100).toFixed(1)}%</span>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // XAI Explanations
-            const expList = document.getElementById('expList');
-            if (data.explanations && data.explanations.length > 0) {
-                expList.innerHTML = data.explanations.map(exp => `
-                    <div class="explanation-item">
-                        <span class="exp-type-badge ${exp.type}">${exp.type}</span>
-                        <span class="exp-name">${exp.name}${exp.id ? ` <span style="color:var(--text-muted);font-size:0.8rem">(${exp.id})</span>` : ''}</span>
-                        <div class="exp-bar-container">
-                            <div class="exp-bar" style="width:${Math.min(exp.attention * 100, 100)}%"></div>
-                        </div>
-                        <span class="exp-score">${(exp.attention * 100).toFixed(0)}%</span>
-                        ${exp.type === 'protein' ? `<button class="simulate-btn" onclick="simulateCounterfactual('${data.drug.name.replace(/'/g, "\\'")}', ${exp.node_idx}, '${exp.name.replace(/'/g, "\\'")}')">Simulate Removal</button>` : ''}
-                    </div>
-                `).join('');
-            } else {
-                expList.innerHTML = '<div class="empty-state">No attention explanations available</div>';
-            }
-        }
-
-        // ── Enter key ───────────────────────────────
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const q = searchInput.value.trim();
-                // If it looks like SMILES and wasn't found in normal search, process as SMILES
-                if (q && q.match(/[CNOcno\(\)\[\]\=\#]/) && q.length > 5 && !document.querySelector('.search-result-item .result-id') || document.querySelector('.search-result-item .result-id')?.textContent === q) {
-                    analyzeDrug(q, true);
-                } else if (q) {
-                    analyzeDrug(q);
+                },
+                plugins: {
+                    ...chartDefaults.plugins,
+                    legend: { display: false },
                 }
             }
         });
+    }
 
-        // ── Mode Toggle ──────────────────────────────
-        function setMode(mode) {
-            const btns = document.querySelectorAll('.combo-toggle button');
-            btns.forEach(b => b.classList.remove('active'));
-            if (mode === 'combo') {
-                btns[1].classList.add('active');
-                document.getElementById('comboInputs').classList.add('active');
-                document.querySelector('.search-wrapper').style.display = 'none';
-            } else {
-                btns[0].classList.add('active');
-                document.getElementById('comboInputs').classList.remove('active');
-                document.querySelector('.search-wrapper').style.display = 'block';
-            }
-            // Hide results
-            document.getElementById('analysisPanel').classList.remove('active');
-            document.getElementById('comboPanel').classList.remove('active');
-            document.getElementById('comboPanel').innerHTML = '';
+    function buildBioChart(biomarkers) {
+        if (chartInstances.bio) chartInstances.bio.destroy();
+        const ctx = document.getElementById('bioChart').getContext('2d');
+        if (biomarkers.length === 0) {
+            chartInstances.bio = new Chart(ctx, {
+                type: 'doughnut',
+                data: { labels: ['No Data'], datasets: [{ data: [1], backgroundColor: ['rgba(0,150,136,0.1)'] }] },
+                options: { ...chartDefaults, plugins: { ...chartDefaults.plugins, legend: { display: false } } }
+            });
+            return;
         }
-
-        // ── Combination Analysis ────────────────────
-        async function analyzeCombination() {
-            const d1 = document.getElementById('comboDrug1').value.trim();
-            const d2 = document.getElementById('comboDrug2').value.trim();
-            const d3 = document.getElementById('comboDrug3').value.trim();
-            if (!d1 || !d2) { alert('Please enter at least 2 drugs'); return; }
-
-            const drugNames = [d1, d2];
-            if (d3) drugNames.push(d3);
-
-            document.getElementById('welcomePanel').style.display = 'none';
-            document.getElementById('analysisPanel').classList.remove('active');
-            document.getElementById('loadingPanel').classList.add('active');
-            document.getElementById('comboPanel').classList.remove('active');
-
-            try {
-                const res = await fetch(`${API}/api/predict_combination`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ drug_names: drugNames, top_k: 25, threshold: 0.1 })
-                });
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.detail || 'Combination analysis failed');
+        // Count by prediction type
+        const counts = { adverse: 0, efficacy: 0, other: 0 };
+        biomarkers.forEach(b => { counts[b.prediction] = (counts[b.prediction] || 0) + 1; });
+        const labels = Object.keys(counts).filter(k => counts[k] > 0).map(k => k.charAt(0).toUpperCase() + k.slice(1));
+        const data = Object.keys(counts).filter(k => counts[k] > 0).map(k => counts[k]);
+        const colors = Object.keys(counts).filter(k => counts[k] > 0).map(k => {
+            if (k === 'adverse') return chartColors.red;
+            if (k === 'efficacy') return chartColors.green;
+            return chartColors.teal;
+        });
+        chartInstances.bio = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels,
+                datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: '#fff' }]
+            },
+            options: {
+                ...chartDefaults,
+                cutout: '55%',
+                plugins: {
+                    ...chartDefaults.plugins,
+                    legend: { position: 'bottom', labels: { font: chartFont, color: '#004d40', padding: 12 } }
                 }
-                const data = await res.json();
-                renderComboResults(data);
-            } catch (e) {
-                alert('Error: ' + e.message);
-                document.getElementById('loadingPanel').classList.remove('active');
-                document.getElementById('welcomePanel').style.display = 'block';
             }
+        });
+    }
+
+    function buildXAIChart(explanations) {
+        if (chartInstances.xai) chartInstances.xai.destroy();
+        const ctx = document.getElementById('xaiChart').getContext('2d');
+        if (explanations.length === 0) {
+            chartInstances.xai = new Chart(ctx, {
+                type: 'polarArea',
+                data: { labels: ['No Data'], datasets: [{ data: [1], backgroundColor: ['rgba(0,150,136,0.1)'] }] },
+                options: { ...chartDefaults }
+            });
+            return;
         }
-
-        function renderComboResults(data) {
-            document.getElementById('loadingPanel').classList.remove('active');
-            const panel = document.getElementById('comboPanel');
-            panel.classList.add('active');
-
-            // Drug names header
-            const drugLabels = data.drugs.map(d => d.name).join(' + ');
-
-            // DDI Warnings
-            let ddiHtml = '';
-            if (data.known_interactions.length > 0) {
-                ddiHtml = data.known_interactions.map(int => `
-                    <div class="ddi-warning">
-                        <span class="icon">&#9888;&#65039;</span>
-                        <div>
-                            <strong>Known Drug Interaction Detected</strong><br>
-                            <span style="color:var(--text-secondary)">${int.drug_a} \u2194 ${int.drug_b} have a documented interaction in the database</span>
-                        </div>
-                    </div>
-                `).join('');
-            }
-
-            // Side effects with synergy
-            let seHtml = '';
-            if (data.side_effects.length > 0) {
-                seHtml = data.side_effects.map(se => {
-                    const indivHtml = Object.entries(se.individual_scores).map(([name, score]) =>
-                        `<span class="individual-score-tag">${name}: ${(score * 100).toFixed(1)}%</span>`
-                    ).join('');
-                    const synergyBadge = se.interaction_amplified
-                        ? `<span class="synergy-badge amplified">\u26a0 Amplified +${(se.synergy_score * 100).toFixed(1)}%</span>`
-                        : '';
-                    const onsetBadge = se.onset_category && se.onset_category !== 'unknown'
-                        ? `<span class="onset-badge ${se.onset_category}">${se.onset_label}</span>`
-                        : '';
-                    return `
-                        <div class="se-item" style="${se.interaction_amplified ? 'border-color: rgba(239,68,68,0.3);' : ''}">
-                            <span class="se-name">${se.name}${onsetBadge}${synergyBadge}</span>
-                            <div class="se-bar-container">
-                                <div class="se-bar ${se.risk_level}" style="width:${se.probability * 100}%"></div>
-                            </div>
-                            <span class="se-prob ${se.risk_level}">${(se.probability * 100).toFixed(1)}%</span>
-                            <span class="risk-badge ${se.risk_level}">${se.risk_level}</span>
-                        </div>
-                        <div class="individual-scores" style="padding-left: 1rem; margin-bottom: 0.4rem;">${indivHtml}</div>
-                    `;
-                }).join('');
-            } else {
-                seHtml = '<div class="empty-state">No significant combined side effects above threshold</div>';
-            }
-
-            // Biomarker interactions for combo
-            let comboBioHtml = '';
-            if (data.biomarkers && data.biomarkers.length > 0) {
-                comboBioHtml = `
-                    <div class="results-card">
-                        <div class="section-title">
-                            <span class="icon">&#129516;</span> Biomarker Interactions
-                        </div>
-                        <div class="bio-list">
-                            ${data.biomarkers.map(b => `
-                                <div class="bio-card">
-                                    <div class="bio-gene">${b.drug} → ${b.gene} (${b.change})</div>
-                                    <div class="bio-protein">${b.protein}</div>
-                                    <div class="bio-prediction ${b.prediction}">${b.prediction}</div>
-                                    <div class="bio-confidence">Confidence: ${(b.confidence * 100).toFixed(1)}%</div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            } else {
-                comboBioHtml = `
-                    <div class="results-card">
-                        <div class="section-title">
-                            <span class="icon">&#129516;</span> Biomarker Interactions
-                        </div>
-                        <div class="empty-state">No significant biomarker interactions found for this combination</div>
-                    </div>
-                `;
-            }
-
-            panel.innerHTML = `
-                <div class="drug-header">
-                    <div>
-                        <div class="drug-name">${drugLabels}</div>
-                        <div class="drug-id">Polypharmacy Combination Analysis</div>
-                    </div>
-                </div>
-                ${ddiHtml}
-                <div class="combo-summary-grid">
-                    <div class="combo-summary-card">
-                        <div class="value blue">${data.drugs.length}</div>
-                        <div class="label">Drugs Combined</div>
-                    </div>
-                    <div class="combo-summary-card">
-                        <div class="value" style="color:var(--accent-red)">${data.summary.amplified_by_combination}</div>
-                        <div class="label">Interaction-Amplified</div>
-                    </div>
-                    <div class="combo-summary-card">
-                        <div class="value" style="color:var(--accent-amber)">${data.summary.known_ddi_count}</div>
-                        <div class="label">Known DDI Pairs</div>
-                    </div>
-                </div>
-                <div class="results-card">
-                    <div class="section-title">
-                        <span class="icon">&#9888;&#65039;</span> Combined Side-Effect Profile
-                    </div>
-                    <div class="se-list">${seHtml}</div>
-                </div>
-                ${comboBioHtml}
-            `;
-        }
-
-        // ── Counterfactual Simulation ────────────────
-        function closeCfModal() {
-            document.getElementById('cfModal').classList.remove('active');
-        }
-
-        async function simulateCounterfactual(drugName, proteinIdx, proteinName) {
-            const modal = document.getElementById('cfModal');
-            const desc = document.getElementById('cfModalDesc');
-            const loading = document.getElementById('cfLoading');
-            const resultsList = document.getElementById('cfResultsList');
-
-            modal.classList.add('active');
-            desc.innerHTML = `Analyzing causal impact: <strong>"If ${drugName} did NOT target ${proteinName}, how would the side-effect risks change?"</strong>`;
-            loading.style.display = 'block';
-            resultsList.innerHTML = '';
-
-            try {
-                const res = await fetch(`${API}/api/counterfactual`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ drug_name: drugName, protein_idx: proteinIdx })
-                });
-
-                if (!res.ok) throw new Error("Simulation failed");
-                const data = await res.json();
-                loading.style.display = 'none';
-
-                if (!data.impact_found || data.results.length === 0) {
-                    resultsList.innerHTML = '<div class="empty-state">No significant causal impact found for this edge deletion.</div>';
-                    return;
+        const labels = explanations.map(ex => ex.name.length > 25 ? ex.name.substring(0, 22) + '...' : ex.name);
+        const data = explanations.map(ex => (ex.attention * 100).toFixed(1));
+        const palette = [chartColors.teal, chartColors.blue, chartColors.green, chartColors.amber, chartColors.purple, chartColors.red];
+        const bgColors = explanations.map((_, i) => palette[i % palette.length]);
+        chartInstances.xai = new Chart(ctx, {
+            type: 'polarArea',
+            data: {
+                labels,
+                datasets: [{
+                    data,
+                    backgroundColor: bgColors.map(c => c.replace('0.75', '0.5')),
+                    borderColor: bgColors,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                ...chartDefaults,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        ticks: { font: { size: 9 }, color: '#004d40', backdropColor: 'transparent' },
+                        grid: { color: 'rgba(0,150,136,0.08)' }
+                    }
+                },
+                plugins: {
+                    ...chartDefaults.plugins,
+                    legend: { position: 'right', labels: { font: { ...chartFont, size: 9 }, color: '#004d40', padding: 8 } }
                 }
-
-                let html = '<h4 style="margin-bottom: 1rem; color: var(--text-color);">Causal Impact on Side Effects (Absolute Drop)</h4>';
-
-                data.results.forEach(r => {
-                    const isSignificant = r.is_causal;
-                    const impactClass = isSignificant ? 'significant' : 'minor';
-                    const itemClass = isSignificant ? 'causal' : '';
-                    const impactStr = r.causal_impact > 0 ? `-${(r.causal_impact * 100).toFixed(1)}%` : `+${Math.abs(r.causal_impact * 100).toFixed(1)}%`;
-
-                    html += `
-                        <div class="cf-result-item ${itemClass}">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; font-size: 0.95rem;">${r.name}</div>
-                                ${isSignificant ? '<div style="font-size: 0.7rem; color: #34d399; margin-top: 0.2rem;">★ Causal connection identified</div>' : ''}
-                            </div>
-                            
-                            <div style="display:flex; align-items:center; gap: 1rem;">
-                                <div class="cf-metric">
-                                    <span class="cf-metric-val">${(r.baseline_prob * 100).toFixed(1)}%</span>
-                                    <span class="cf-metric-label">Baseline</span>
-                                </div>
-                                <span class="cf-arrow">→</span>
-                                <div class="cf-metric">
-                                    <span class="cf-metric-val">${(r.counterfactual_prob * 100).toFixed(1)}%</span>
-                                    <span class="cf-metric-label">Simulated</span>
-                                </div>
-                                <div class="cf-impact ${impactClass}">
-                                    ${impactStr}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                resultsList.innerHTML = html;
-
-            } catch (e) {
-                loading.style.display = 'none';
-                resultsList.innerHTML = `<div class="empty-state" style="color:var(--accent-red)">Error running simulation: ${e.message}</div>`;
             }
+        });
+    }
+
+    function buildCFChart(results) {
+        if (chartInstances.cf) chartInstances.cf.destroy();
+        const container = document.getElementById('cfChartView');
+        container.classList.remove('hidden');
+        const ctx = document.getElementById('cfChart').getContext('2d');
+        const labels = results.map(r => r.name.charAt(0).toUpperCase() + r.name.slice(1));
+        chartInstances.cf = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Baseline',
+                        data: results.map(r => (r.baseline_prob * 100).toFixed(1)),
+                        backgroundColor: chartColors.red,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Without Target',
+                        data: results.map(r => (r.counterfactual_prob * 100).toFixed(1)),
+                        backgroundColor: chartColors.green,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                ...chartDefaults,
+                scales: {
+                    x: { ticks: { font: { ...chartFont, size: 9 }, color: '#004d40', maxRotation: 45 }, grid: { display: false } },
+                    y: { beginAtZero: true, ticks: { font: chartFont, color: '#004d40', callback: v => v + '%' }, grid: { color: 'rgba(0,150,136,0.06)' } }
+                },
+                plugins: {
+                    ...chartDefaults.plugins,
+                    legend: { position: 'top', labels: { font: chartFont, color: '#004d40', usePointStyle: true, padding: 15 } }
+                }
+            }
+        });
+    }
+
+    function buildComboChart(sideEffects) {
+        if (chartInstances.combo) chartInstances.combo.destroy();
+        const ctx = document.getElementById('comboChart').getContext('2d');
+        const labels = sideEffects.map(se => se.name.charAt(0).toUpperCase() + se.name.slice(1));
+        const probs = sideEffects.map(se => (se.probability * 100).toFixed(1));
+        const synergies = sideEffects.map(se => (se.synergy_score * 100).toFixed(1));
+        chartInstances.combo = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Combined Probability (%)',
+                        data: probs,
+                        backgroundColor: sideEffects.map(se => se.risk_level === 'high' ? chartColors.red : se.risk_level === 'medium' ? chartColors.amber : chartColors.green),
+                        borderRadius: 4,
+                        order: 1
+                    },
+                    {
+                        label: 'Synergy Score (%)',
+                        data: synergies,
+                        type: 'line',
+                        borderColor: chartColors.purple,
+                        backgroundColor: chartColors.purpleBg,
+                        pointBackgroundColor: chartColors.purple,
+                        pointRadius: 4,
+                        tension: 0.3,
+                        fill: true,
+                        order: 0
+                    }
+                ]
+            },
+            options: {
+                ...chartDefaults,
+                scales: {
+                    x: { ticks: { font: { ...chartFont, size: 9 }, color: '#004d40', maxRotation: 45 }, grid: { display: false } },
+                    y: { beginAtZero: true, ticks: { font: chartFont, color: '#004d40', callback: v => v + '%' }, grid: { color: 'rgba(0,150,136,0.06)' } }
+                },
+                plugins: {
+                    ...chartDefaults.plugins,
+                    legend: { position: 'top', labels: { font: chartFont, color: '#004d40', usePointStyle: true, padding: 15 } }
+                }
+            }
+        });
+    }
+
+    // ── Render Combination Results ──
+    function renderComboResults(d) {
+        hideLoading();
+        document.getElementById('welcomePanel').classList.add('hidden');
+        document.getElementById('analysisPanel').classList.add('hidden');
+        document.getElementById('comboResultsPanel').classList.remove('hidden');
+
+        document.getElementById('comboDrugsTitle').textContent = d.drugs.map(x => x.name).join(' + ');
+        document.getElementById('comboSummary').textContent =
+            `${d.summary.total_predicted} predicted SEs | ${d.summary.amplified_by_combination} amplified | ${d.summary.known_ddi_count} known DDIs`;
+
+        // DDI Alerts
+        const alerts = document.getElementById('ddiAlerts');
+        alerts.innerHTML = '';
+        d.known_interactions.forEach(ddi => {
+            alerts.innerHTML += `<div class="ddi-alert">⚠️ Known interaction: <strong>${ddi.drug_a}</strong> ↔ <strong>${ddi.drug_b}</strong></div>`;
+        });
+
+        // Combo SE Table
+        const tbody = document.getElementById('comboSETableBody');
+        tbody.innerHTML = '';
+        d.side_effects.forEach(se => {
+            const pct = (se.probability * 100).toFixed(1);
+            const cls = se.risk_level;
+            const syn = se.synergy_score;
+            const synCls = syn > 0 ? 'synergy-positive' : 'synergy-negative';
+            const synSign = syn > 0 ? '+' : '';
+            tbody.innerHTML += `<tr>
+                <td style="text-transform:capitalize">${se.name}</td>
+                <td>${pct}%</td>
+                <td><div class="prob-bar-wrap"><div class="prob-bar ${cls}" style="width:${pct}%"></div></div></td>
+                <td><span class="badge badge-${cls}">${cls}</span></td>
+                <td class="${synCls}">${synSign}${(syn * 100).toFixed(1)}%</td>
+                <td>${se.interaction_amplified ? '<span class="badge badge-high">YES</span>' : '—'}</td>
+                <td style="font-size:0.7rem; color:var(--text-muted)">${se.onset_label || '—'}</td>
+            </tr>`;
+        });
+
+        // Build Combo Chart
+        buildComboChart(d.side_effects);
+    }
+
+    // ── Counterfactual ──
+    async function runCounterfactual(proteinIdx) {
+        if (!currentDrugName) return;
+        const panel = document.getElementById('cfResultsInline');
+        panel.innerHTML = '<div class="loading active"><div class="spinner"></div></div>';
+        try {
+            const res = await fetch('/api/counterfactual', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({drug_name: currentDrugName, protein_idx: proteinIdx, top_k: 8})
+            });
+            const d = await res.json();
+            if (!d.impact_found) {
+                panel.innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem;text-align:center;padding:1rem;">No edge found for this interaction</div>';
+                return;
+            }
+            let html = '<table class="data-table"><thead><tr><th>Side Effect</th><th>Baseline</th><th>Without Target</th><th>Impact</th><th></th></tr></thead><tbody>';
+            d.results.forEach(r => {
+                const impactPct = (r.causal_impact * 100).toFixed(1);
+                const causalBadge = r.is_causal ? '<span class="badge badge-high">Causal</span>' : '<span class="badge badge-other">Minor</span>';
+                html += `<tr>
+                    <td style="text-transform:capitalize">${r.name}</td>
+                    <td>${(r.baseline_prob * 100).toFixed(1)}%</td>
+                    <td>${(r.counterfactual_prob * 100).toFixed(1)}%</td>
+                    <td class="synergy-positive">-${impactPct}%</td>
+                    <td>${causalBadge}</td>
+                </tr>`;
+            });
+            html += '</tbody></table>';
+            panel.innerHTML = html;
+            // Build the counterfactual chart
+            buildCFChart(d.results);
+        } catch (e) {
+            panel.innerHTML = '<div style="color:var(--accent-red);font-size:0.8rem;">Error running counterfactual</div>';
         }
+    }
 
-        // ── Init ────────────────────────────────────
-        // Initialize autocompletes
-        setupAutocomplete('searchInput', 'searchResults', (name, id) => {
-            document.getElementById('searchInput').value = name;
-            analyzeDrug(name);
-        });
-
-        // Combo autocompletes just fill the input
-        setupAutocomplete('comboDrug1', 'searchResults1', (name) => {
-            document.getElementById('comboDrug1').value = name;
-        });
-        setupAutocomplete('comboDrug2', 'searchResults2', (name) => {
-            document.getElementById('comboDrug2').value = name;
-        });
-        setupAutocomplete('comboDrug3', 'searchResults3', (name) => {
-            document.getElementById('comboDrug3').value = name;
-        });
-
-        loadStats();
+    function closeCfModal() { document.getElementById('cfModal').classList.remove('active'); }
     </script>
 </body>
-
 </html>

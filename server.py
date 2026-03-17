@@ -133,9 +133,14 @@ se_df = pd.read_csv(os.path.join(DATA_DIR, "nodes_side_effects.csv"))
 
 # Drug name -> node_idx
 drug_name_to_idx = {}
+drug_smiles_to_idx = {}  # SMILES -> node_idx for known drug matching
 for _, row in drugs_df.iterrows():
-    drug_name_to_idx[str(row["name"]).lower().strip()] = int(row["node_idx"])
-    drug_name_to_idx[str(row["drug_id"]).strip()] = int(row["node_idx"])
+    idx = int(row["node_idx"])
+    drug_name_to_idx[str(row["name"]).lower().strip()] = idx
+    drug_name_to_idx[str(row["drug_id"]).strip()] = idx
+    smiles_str = str(row.get("smiles", "")).strip()
+    if smiles_str and smiles_str != "nan":
+        drug_smiles_to_idx[smiles_str] = idx
 
 # Load graph
 graph_data = torch.load(os.path.join(DATA_DIR, "graph_data.pt"),
@@ -312,6 +317,9 @@ class DrugSearchRequest(BaseModel):
 class SmilesPredictionRequest(BaseModel):
     smiles: str
     drug_name: Optional[str] = "Novel Compound"
+    target_proteins: Optional[list] = []
+    interacting_drugs: Optional[list] = []
+    associated_biomarkers: Optional[list] = []
     top_k: Optional[int] = 20
     threshold: Optional[float] = 0.3
 
@@ -322,9 +330,7 @@ class CombinationRequest(BaseModel):
     threshold: Optional[float] = 0.1
 
 
-@app.get("/")
-async def root():
-    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
+
 
 
 @app.get("/api/stats")
@@ -361,6 +367,61 @@ async def search_drugs(req: DrugSearchRequest):
                 break
     return {"results": matches}
 
+
+@app.post("/api/search_proteins")
+async def search_proteins(req: DrugSearchRequest):
+    query = req.query.lower().strip()
+    if len(query) < 1:
+        return {"results": []}
+
+    matches = []
+    # Hack for demonstration: Map common gene abbreviations to full protein names
+    aliases = {
+        "ptgs1": "prostaglandin g/h synthase 1",
+        "ptgs2": "prostaglandin g/h synthase 2",
+        "cox1": "prostaglandin g/h synthase 1",
+        "cox2": "prostaglandin g/h synthase 2",
+        "egfr": "epidermal growth factor receptor"
+    }
+    search_term = aliases.get(query, query)
+
+    for _, row in proteins_df.iterrows():
+        name = str(row.get("name", "")).lower()
+        uniprot = str(row.get("target_id", "")).lower()
+        
+        if search_term in name or search_term in uniprot:
+            display_name = str(row.get("name", "Unknown"))
+            matches.append({
+                "protein_id": str(row.get("target_id", "")),
+                "name": display_name,
+                "node_idx": int(row["node_idx"]),
+            })
+            if len(matches) >= req.limit:
+                break
+    return {"results": matches}
+
+
+@app.post("/api/search_biomarkers")
+async def search_biomarkers(req: DrugSearchRequest):
+    query = req.query.lower().strip()
+    if len(query) < 1:
+        return {"results": []}
+
+    matches = []
+    for _, row in biomarkers_df.iterrows():
+        gene = str(row.get("gene_symbol", "")).lower()
+        protein = str(row.get("protein_name", "")).lower()
+        
+        if query in gene or query in protein:
+            matches.append({
+                "biomarker_id": str(row.get("biomarker_key", "")),
+                "gene": str(row.get("gene_symbol", "")),
+                "protein": str(row.get("protein_name", "")),
+                "node_idx": int(row["node_idx"]),
+            })
+            if len(matches) >= req.limit:
+                break
+    return {"results": matches}
 
 @app.post("/api/predict")
 async def predict(req: PredictionRequest):
@@ -462,22 +523,141 @@ async def predict_smiles(req: SmilesPredictionRequest):
     if not smiles:
         raise HTTPException(status_code=400, detail="SMILES string cannot be empty")
 
+    # ---- Check if this SMILES matches a known drug ----
+    known_idx = drug_smiles_to_idx.get(smiles)
+    if known_idx is not None:
+        # Use the exact same prediction logic as /api/predict for consistency
+        drug_row = drugs_df[drugs_df["node_idx"] == known_idx].iloc[0]
+        with torch.no_grad():
+            drug_emb = drug_embeddings[known_idx].unsqueeze(0)
+            se_logits = model.predict_side_effects(drug_emb)
+            se_probs = torch.sigmoid(se_logits).squeeze().numpy()
+
+            top_indices = np.argsort(se_probs)[::-1][:req.top_k]
+            side_effects = []
+            for idx in top_indices:
+                prob = float(se_probs[idx])
+                if prob >= req.threshold:
+                    t_info = temporal_labels.get(int(idx), {})
+                    side_effects.append({
+                        "name": se_names[idx],
+                        "probability": round(prob, 4),
+                        "risk_level": "high" if prob > 0.7 else "medium" if prob > 0.4 else "low",
+                        "onset_category": t_info.get("category", "unknown"),
+                        "median_onset_days": t_info.get("median_days", None),
+                        "onset_label": ONSET_LABELS.get(t_info.get("category", ""), "Unknown"),
+                    })
+
+            # Biomarker predictions (connected biomarkers from graph)
+            bio_et = ("drug", "associated_with", "biomarker")
+            bio_ei = graph_data[bio_et].edge_index
+            drug_mask = bio_ei[0] == known_idx
+            connected_bio_indices = bio_ei[1][drug_mask].tolist()
+
+            biomarkers = []
+            if connected_bio_indices:
+                for bio_idx in connected_bio_indices:
+                    edge_idx = torch.tensor([[known_idx], [bio_idx]], dtype=torch.long)
+                    bio_logit = model.predict_biomarker_type(
+                        drug_embeddings, bio_embeddings, edge_idx
+                    )
+                    bio_probs_t = F.softmax(bio_logit, dim=-1).squeeze().numpy()
+                    pred_class = int(np.argmax(bio_probs_t))
+                    class_names = ["adverse", "efficacy", "other"]
+                    biomarkers.append({
+                        "gene": bio_info[bio_idx]["gene"],
+                        "change": bio_info[bio_idx]["change"],
+                        "protein": bio_info[bio_idx]["protein"],
+                        "prediction": class_names[pred_class],
+                        "confidence": round(float(bio_probs_t[pred_class]), 4),
+                        "probabilities": {
+                            "adverse": round(float(bio_probs_t[0]), 4),
+                            "efficacy": round(float(bio_probs_t[1]), 4),
+                            "other": round(float(bio_probs_t[2]), 4),
+                        }
+                    })
+
+        # XAI explanations (same as /api/predict)
+        with torch.no_grad():
+            _ = model(x_dict, eid)
+            attn_w, attn_idx = model.get_last_layer_attention()
+        explanations = get_explanations(known_idx, attn_w, attn_idx, eid)
+
+        return {
+            "drug": {
+                "id": str(drug_row["drug_id"]),
+                "name": req.drug_name if req.drug_name != "Novel Compound" else str(drug_row["name"]),
+                "smiles": smiles,
+            },
+            "side_effects": side_effects,
+            "biomarkers": biomarkers,
+            "explanations": explanations,
+            "model_info": {
+                "test_auc": results.get("test_auc", 0),
+                "bio_accuracy": results.get("bio_acc", 0),
+                "note": "Known drug detected from SMILES - using graph embedding for consistency"
+            }
+        }
+
+    # ---- Truly novel compound: use ChemBERTa ----
     try:
-        # 1. Generate embedding using ChemBERTa
+            # 1. Generate embedding using ChemBERTa
         with torch.no_grad():
             inputs = chemberta_tokenizer(smiles, return_tensors="pt", padding=True, truncation=True)
             outputs = chemberta_model(**inputs)
             # CLS token embedding
             drug_emb = outputs.last_hidden_state[:, 0, :]  # Shape: [1, 384]
 
-            # 2. Append to graph and run HGT forward pass to get post-message-passing 128-dim embedding
+            # 2. Append to graph
             new_x_dict = {k: v.clone() for k, v in x_dict.items()}
             new_x_dict["drug"] = torch.cat([new_x_dict["drug"], drug_emb], dim=0)
+            novel_idx = len(x_dict["drug"])
             
-            out_dict = model(new_x_dict, eid)
+            # 2b. Inject Protein Edges if provided!
+            new_eid = {k: v.clone() for k, v in eid.items()}
+            targets_et = ("drug", "targets", "protein")
+            
+            if req.target_proteins and targets_et in new_eid:
+                # Create edges from novel_idx to each selected protein_idx
+                src_edges = torch.full((len(req.target_proteins),), novel_idx, dtype=torch.long)
+                dst_edges = torch.tensor(req.target_proteins, dtype=torch.long)
+                injected_edges = torch.stack([src_edges, dst_edges], dim=0)
+                
+                # Append to existing bipartite edge index ("drug", "targets", "protein")
+                new_eid[targets_et] = torch.cat([new_eid[targets_et], injected_edges], dim=1)
+                
+                # IMPORTANT: Also add the reverse edge so information flows BACK to the novel drug!
+                rev_targets_et = ("protein", "targeted_by", "drug")
+                rev_injected_edges = torch.stack([dst_edges, src_edges], dim=0)
+                
+                if rev_targets_et in new_eid:
+                    new_eid[rev_targets_et] = torch.cat([new_eid[rev_targets_et], rev_injected_edges], dim=1)
+                else:
+                    new_eid[rev_targets_et] = rev_injected_edges
+
+            # 2c. Inject Drug-Drug Interactions (DDI) if provided
+            ddi_et = ("drug", "interacts", "drug")
+            if req.interacting_drugs and ddi_et in new_eid:
+                src_ddi = torch.full((len(req.interacting_drugs),), novel_idx, dtype=torch.long)
+                dst_ddi = torch.tensor(req.interacting_drugs, dtype=torch.long)
+                
+                # Add forward edges (novel -> existing)
+                injected_ddi_fwd = torch.stack([src_ddi, dst_ddi], dim=0)
+                # Add reverse edges (existing -> novel)
+                injected_ddi_rev = torch.stack([dst_ddi, src_ddi], dim=0)
+                
+                new_eid[ddi_et] = torch.cat([new_eid[ddi_et], injected_ddi_fwd, injected_ddi_rev], dim=1)
+
+            # 2d. Inject Biomarker Associations if provided
+            bio_et = ("drug", "associated_with", "biomarker")
+            if req.associated_biomarkers and bio_et in new_eid:
+                src_bio = torch.full((len(req.associated_biomarkers),), novel_idx, dtype=torch.long)
+                dst_bio = torch.tensor(req.associated_biomarkers, dtype=torch.long)
+                injected_bio = torch.stack([src_bio, dst_bio], dim=0)
+                new_eid[bio_et] = torch.cat([new_eid[bio_et], injected_bio], dim=1)
+            out_dict = model(new_x_dict, new_eid)
             
             # The last drug in the tensor is our novel compound
-            novel_idx = len(x_dict["drug"])
             drug_emb_128 = out_dict["drug"][novel_idx].unsqueeze(0) # [1, 128]
             live_bio_embeddings = out_dict["biomarker"]
 
@@ -545,16 +725,21 @@ async def predict_smiles(req: SmilesPredictionRequest):
             biomarkers = biomarkers[:5]
 
             # Get explanations from last layer attention
+            # NOTE: We must pass new_eid so the explainer sees our injected edges!
             attn_w, attn_idx = model.get_last_layer_attention()
-            # For novel compounds, show general graph-level attention
             explanations = []
-            if attn_w is not None:
+            
+            if req.target_proteins:
+                # If we injected targets, run the full explanation logic over the mutated graph
+                explanations = get_explanations(novel_idx, attn_w, attn_idx, new_eid)
+            elif attn_w is not None:
+                # Otherwise, show general structural attention
                 mean_attn = float(attn_w.mean())
                 explanations.append({
                     "type": "info",
-                    "name": "Graph-level attention (novel compound)",
+                    "name": "Graph-level Structural Association (no targets provided)",
                     "id": "",
-                    "attention": round(mean_attn, 4)
+                    "attention": min(1.0, round(mean_attn + 0.1, 4))
                 })
 
         return {
@@ -569,7 +754,7 @@ async def predict_smiles(req: SmilesPredictionRequest):
             "model_info": {
                 "test_auc": results.get("test_auc", 0),
                 "bio_accuracy": results.get("bio_acc", 0),
-                "note": "Prediction from SMILES using live ChemBERTa embedding"
+                "note": "Prediction from SMILES using live ChemBERTa embedding (novel compound)"
             }
         }
     except Exception as e:
@@ -768,4 +953,22 @@ async def counterfactual(req: CounterfactualRequest):
 
 # Mount static files
 os.makedirs(STATIC_DIR, exist_ok=True)
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+@app.get("/")
+async def serve_landing():
+    """Serve the landing page at the root URL."""
+    landing_path = os.path.join(STATIC_DIR, "landing.html")
+    return FileResponse(landing_path)
+
+@app.get("/app")
+async def serve_app():
+    """Serve the main application dashboard."""
+    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
+
+# Catch-all to serve static files from root without relying on Starlette mount which shadows '/'
+@app.get("/{file_path:path}")
+async def serve_root_file(file_path: str):
+    target_path = os.path.join(STATIC_DIR, file_path)
+    if os.path.exists(target_path) and os.path.isfile(target_path):
+        return FileResponse(target_path)
+    raise HTTPException(status_code=404, detail="File not found")

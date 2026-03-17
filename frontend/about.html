@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About MedWatchPro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #041f23;
+            --bg-gradient: radial-gradient(circle at center, #0a3d42 0%, #021113 100%);
+            --text-color: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.65);
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.15);
+            --accent-glow: rgba(45, 212, 191, 0.3);
+            --border: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(4, 31, 35, 0.65);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+        }
+
+        /* ── Blurred Background Image ── */
+        .bg-image {
+            position: fixed;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            /* Oversize to hide blur edges */
+            background-image: url('dna_background_8k_7680x4320.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(12px);
+            z-index: 0;
+        }
+
+        /* dark vignette */
+        .bg-image::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(4, 31, 35, 0.7);
+        }
+
+        /* ── Navigation ── */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.8rem 4rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.5px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            color: var(--accent);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: 400;
+        }
+
+        .nav-links li::before {
+            content: "";
+            display: block;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+
+        .nav-links li:hover {
+            color: var(--text-color);
+        }
+
+        .btn-launch {
+            border: 1px solid var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.7rem 1.6rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-launch:hover {
+            background: rgba(45, 212, 191, 0.25);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        /* ── Content Container (No Panel) ── */
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            margin: 120px auto 60px;
+            padding: 3rem;
+        }
+
+        .header-title {
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            text-align: center;
+        }
+
+        .intro {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .section-title {
+            font-family: 'Fjalla One', sans-serif;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title span {
+            color: var(--accent);
+        }
+
+        .feature-block {
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+            border-left: 2px solid var(--accent-dim);
+            transition: border-color 0.3s;
+        }
+
+        .feature-block:hover {
+            border-color: var(--accent);
+        }
+
+        .feature-block h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-block p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ── Animation ── */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease forwards;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Blurred Background -->
+    <div class="bg-image"></div>
+
+    <nav>
+        <a href="landing.html" class="logo">
+            <span class="logo-icon">&#10022;</span> MedWatchPro
+        </a>
+        <ul class="nav-links">
+            <a href="landing.html" style="color: inherit; text-decoration: none;">
+                <li>Home</li>
+            </a>
+            <li>GitHub</li>
+        </ul>
+        <a href="index.html" class="btn-launch">Launch App →</a>
+    </nav>
+
+    <div class="container fade-in">
+        <h1 class="header-title">About the Platform</h1>
+        <p class="intro">
+            MedWatchPro is an advanced AI-driven drug safety intelligence system.
+            By integrating molecular chemistry, protein structures, and large-scale knowledge graphs,
+            it provides researchers and clinicians with deep insights into adverse drug reactions,
+            polypharmacy risks, and genetic biomarker responses — all fully explainable through attention mechanisms.
+        </p>
+
+        <h2 class="section-title"><span>01</span> Architecture & Models</h2>
+
+        <div class="feature-block">
+            <h3>Multi-Modal Molecular Encoding</h3>
+            <p>We fuse state-of-the-art transformer models for structural biology. ChemBERTa processes SMILES strings
+                into 384-dimensional molecular embeddings, while ProtBERT translates protein sequences into robust
+                1024-dimensional continuous representations. These modalities are unified into a shared latent space.
+            </p>
+        </div>
+
+        <div class="feature-block">
+            <h3>Heterogeneous Graph Transformer (HGT)</h3>
+            <p>At the core of the engine sits a massive 4-node, 5-edge-type knowledge graph indexing 14,616 drugs, 5,237
+                proteins, 144 biomarkers, and 100 severe side effects. The data is processed via a 2-layer HGTConv
+                network featuring multi-head attention.</p>
+        </div>
+
+        <h2 class="section-title"><span>02</span> Clinical Capabilities</h2>
+
+        <div class="feature-block">
+            <h3>Zero-Shot Novel Compound Prediction</h3>
+            <p>The system is not limited to known drugs. By analyzing the raw SMILES string of any novel or experimental
+                compound, MedWatchPro can embed the molecule live, inject it into the existing graph framework, and
+                instantly predict potential clinical risks without any retraining required.</p>
+        </div>
+
+        <div class="feature-block">
+            <h3>Polypharmacy Risk Analysis</h3>
+            <p>Analyzing a single drug is rarely enough. By aggregating embeddings across combinations of 2 to 3 drugs
+                simultaneously, the system computes synergy scores. These scores highlight safety risks where adverse
+                effects are amplified beyond the sum of their individual parts.</p>
+        </div>
+
+        <div class="feature-block">
+            <h3>Temporal Onset Prediction</h3>
+            <p>Leveraging over 1.14 million real-world adverse event reports from the FDA FAERS database, MedWatchPro
+                moves beyond binary risk flags by predicting the clinical onset window for side effects, classifying
+                reactions dynamically from acute to chronic.</p>
+        </div>
+
+        <div class="feature-block">
+            <h3>Pharmacogenomics Biomarkers</h3>
+            <p>A specialized dual-decoder jointly predicts 100 side effects while simultaneously classifying 144 key
+                genetic biomarkers as either adverse, efficacy-related, or other, all in a single forward pass.</p>
+        </div>
+
+        <h2 class="section-title"><span>03</span> Trust & Transparency</h2>
+
+        <div class="feature-block">
+            <h3>Counterfactual Explainability (XAI)</h3>
+            <p>Medical AI requires trust. Our system utilizes a custom modified HGTConv architecture to capture
+                self-attention weights directly from the graph message-passing layers. This reveals precisely which
+                protein targets and drug-drug interactions drove the model toward a specific predictive outcome.</p>
+        </div>
+
+    </div>
+</body>
+
+</html>
