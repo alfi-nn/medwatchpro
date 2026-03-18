@@ -383,6 +383,7 @@ torch.save(protein_embs, "protein_embeddings.pt")
 ### Start the Server
 
 ```bash
+ Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 # Activate virtual environment
 venv\Scripts\activate   # Windows
 source venv/bin/activate  # Linux/Mac

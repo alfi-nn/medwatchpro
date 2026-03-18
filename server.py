@@ -888,21 +888,19 @@ async def counterfactual(req: CounterfactualRequest):
     if mask.all():
         return {"impact_found": False, "message": "Edge not found in graph."}
 
-    # 1. Baseline prediction (using pre-computed embeddings)
+    # 1. Baseline prediction (using FULL graph)
     with torch.no_grad():
-        drug_emb_base = drug_embeddings[node_idx].unsqueeze(0)
+        out_base = model(x_dict, eid)
+        drug_emb_base = out_base["drug"][node_idx].unsqueeze(0)
         se_logits_base = model.predict_side_effects(drug_emb_base)
         se_probs_base = torch.sigmoid(se_logits_base).squeeze().numpy()
 
-    # 2. To compute true attribution impact, we find the isolated graph contribution 
-    # and apportion it to this target protein.
+    # 2. To compute true attribution impact in a dense residual GNN, we find the 
+    # isolated graph contribution by removing ALL edges of the drug.
     eid_no_graph = {k: v.clone() for k, v in eid.items()}
-    num_targets = 1
     for et, ei in eid_no_graph.items():
         if et[0] == 'drug':
             m = ei[0] != node_idx
-            if et == ('drug', 'targets', 'protein'):
-                num_targets = max(1, (~m).sum().item())
             eid_no_graph[et] = ei[:, m]
         if et[2] == 'drug':
             m = ei[1] != node_idx
@@ -913,7 +911,28 @@ async def counterfactual(req: CounterfactualRequest):
         drug_emb_no = out_no_graph["drug"][node_idx].unsqueeze(0)
         se_probs_no = torch.sigmoid(model.predict_side_effects(drug_emb_no)).squeeze().numpy()
 
-    # 4. Calculate Impact
+    # 3. Calculate structural attribution factor for this specific protein
+    ei_targets = eid.get(('drug', 'targets', 'protein'))
+    attribution_factor = 0.5  # fallback
+    if ei_targets is not None:
+        # Calculate degrees (importance) of proteins in the whole graph
+        all_protein_targets = ei_targets[1]
+        protein_degrees = torch.bincount(all_protein_targets)
+        
+        # Find all proteins targeted by THIS drug
+        drug_mask = ei_targets[0] == node_idx
+        target_proteins = ei_targets[1][drug_mask]
+        
+        if req.protein_idx < len(protein_degrees) and len(target_proteins) > 0:
+            target_protein_degree = float(protein_degrees[req.protein_idx].item())
+            total_drug_target_degrees = sum(float(protein_degrees[p].item()) for p in target_proteins if p < len(protein_degrees))
+            
+            if total_drug_target_degrees > 0:
+                # The causal share of this protein is proportional to its degree 
+                # (hub proteins carry more structural message weight in GNNs)
+                attribution_factor = target_protein_degree / total_drug_target_degrees
+
+    # 4. Calculate final apportioned impact per side effect
     results_out = []
     top_indices = np.argsort(se_probs_base)[::-1][:req.top_k]
     
@@ -922,23 +941,17 @@ async def counterfactual(req: CounterfactualRequest):
         no_graph_p = float(se_probs_no[idx])
         total_graph_impact = base_p - no_graph_p
         
-        # Attribution factor: apportion total graph risk to this target
-        # We apply a slight sensitivity scaling (x2) to make the visualization 
-        # clearer for users, capped at the total graph impact.
-        attribution_factor = min(1.0, 2.0 / num_targets)
+        # Apportion total graph risk to this specific target protein
         impact = total_graph_impact * attribution_factor
         cf_p = max(0.0, base_p - impact)
         
-        # We only care about reporting moderate to high baseline risks, 
-        # or anything with a significant impact
-        if base_p > 0.2 or abs(impact) > 0.02:
-            results_out.append({
-                "name": se_names[idx],
-                "baseline_prob": round(base_p, 4),
-                "counterfactual_prob": round(cf_p, 4),
-                "causal_impact": round(impact, 4),
-                "is_causal": impact > 0.02 # 2% absolute drop signifies causality in attributed XAI
-            })
+        results_out.append({
+            "name": se_names[idx],
+            "baseline_prob": round(base_p, 4),
+            "counterfactual_prob": round(cf_p, 4),
+            "causal_impact": round(impact, 4),
+            "is_causal": impact > 0.005  # 0.5% absolute drop signifies causality
+        })
             
     # Sort by impact descending
     results_out.sort(key=lambda x: x["causal_impact"], reverse=True)
