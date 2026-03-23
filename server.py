@@ -523,6 +523,14 @@ async def predict_smiles(req: SmilesPredictionRequest):
     if not smiles:
         raise HTTPException(status_code=400, detail="SMILES string cannot be empty")
 
+    try:
+        from rdkit import Chem
+        mol = Chem.MolFromSmiles(smiles)
+        if mol is None:
+            raise HTTPException(status_code=400, detail="Invalid SMILES string provided. Chemically impossible.")
+    except ImportError:
+        pass # If rdkit somehow fails to load, gracefully fallback
+
     # ---- Check if this SMILES matches a known drug ----
     known_idx = drug_smiles_to_idx.get(smiles)
     if known_idx is not None:
